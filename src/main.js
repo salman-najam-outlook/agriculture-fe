@@ -65,16 +65,6 @@ Vue.filter('formatDate', value => {
    if(!value) return 
     return moment(value).format('DD-MMM-YYYY')
 })
-// const configOptions = {
-//   apiKey: "AIzaSyC33tg6hg4PYHVP0Kr0lI--ppOpzSU0A0E",
-//   authDomain: "dimitra-82a9a.firebaseapp.com",
-//   databaseURL: "https://dimitra-82a9a-default-rtdb.firebaseio.com",
-//   projectId: "dimitra-82a9a",
-//   storageBucket: "dimitra-82a9a.appspot.com",
-//   messagingSenderId: "464930559018",
-//   appId: "1:464930559018:web:53bc5a447db7240c329f53",
-//   measurementId: "G-QJN0PS6P30",
-// };
 
 // firebase.initializeApp(configOptions);
 axios.defaults.baseURL = process.env.VUE_APP_BASE_URL || `https://sass-api-dev.dimitra.dev/api/admin`;
