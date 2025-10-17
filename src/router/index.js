@@ -110,15 +110,18 @@ const router = new VueRouter({
 });
 
 router.beforeEach( async (to, from, next) => {
-  await store.dispatch('autoLogin');
-  await store.dispatch('eudrSettings/loadEudrSetting')
-  // if undefined considered requiresAuth as true
+  //salman
   const isAuth = await store.getters.isAuthenticated;
-  const currentRouteName = to.name
-  const user = localStorage.getItem('user')
+  const user = store.getters.getUser;
+   if (isAuth && (!user || Object.keys(user).length === 0)) {
+      await store.dispatch('autoLogin');
+      await store.dispatch('eudrSettings/loadEudrSetting');
+  }
+  const currentRouteName = to.name;
   let sideBarMenu
   if (user) {
-    sideBarMenu = JSON.parse(localStorage.getItem('user')).sideBarMenu
+    sideBarMenu = user.sideBarMenu
+    //salman
   } else {
     sideBarMenu = store && store.getters && store.getters.getUser && store.getters.getUser.sideBarMenu
   }

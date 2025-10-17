@@ -1,4 +1,5 @@
 import axios from "axios";
+import router from "../../router/index";
 
 export default {
   async checkAuth(context, data) {
@@ -8,8 +9,9 @@ export default {
         .then((response) => {
           response = response.data;
           if (response.success) {
-            const user = response.data;
+            const user = response.data; 
             context.commit("setUserData", user);
+            localStorage.setItem('isAuthenticated', 'true');
             resolve({ success: "ok" });
           } else {
             reject(response.message);
@@ -21,16 +23,18 @@ export default {
     });
   },
 
-  async autoLogin(context) {
-    const user = await JSON.parse(localStorage.getItem("user"));
-    const token = await localStorage.getItem("token");
-    const refToken = await localStorage.getItem("refreshtoken");
-    if (user && token) {
-      await context.commit("setUserData", user);
-      await context.commit("setAuthToken", token);
-      await context.commit("setRefreshToken", refToken);
+  //salman
+async autoLogin(context) {
+  try {
+    const response = await axios.get("/user-data");
+    if (response.data.success) {
+      context.commit("setUserData", response.data.data);
     }
-  },
+  } catch (error) {
+   console.log(error);
+  }
+},
+  //salman
 
   async logout(context) {
     // localStorage.removeItem('token');
@@ -39,6 +43,9 @@ export default {
     context.commit("unsetUser");
     // Clear farmers data
     context.dispatch("memberData/clearFarmersOptions", null, { root: true });
+    //salman
+    router.push('/login')
+    //salman
     // await axios.post('/logout',{})
     //     .then( (response) => {
     //         console.log(response)
@@ -94,27 +101,22 @@ export default {
       });
   },
 
+  //salman
   async refreshToken(context) {
-    const token = context.getters.getAuthToken;
-    const refershToken = context.getters.getRefreshToken;
     return await axios
-      .post("/access-token", {
-        accesstoken: token,
-        refreshtoken: refershToken,
-      })
+      .post("/access-token")
       .then((res) => {
         res = res.data;
         if (!res.success) {
           context.dispatch("logout");
           throw res.message;
         }
-        context.commit("setAuthToken", res.data.accesstoken);
-        context.commit("setRefreshToken", res.data.refreshtoken);
       })
       .catch((err) => {
         throw err;
       });
   },
+  //salman
 
   async setModulePermittedActions(context, payload) {
     await context.commit("setModulePermittedActions", payload);

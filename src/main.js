@@ -69,6 +69,7 @@ Vue.filter('formatDate', value => {
 // firebase.initializeApp(configOptions);
 axios.defaults.baseURL = process.env.VUE_APP_BASE_URL || `https://sass-api-dev.dimitra.dev/api/admin`;
 axios.defaults.headers.common['Content-Type'] = 'application/json';
+axios.defaults.withCredentials = true;
 var language = localStorage.getItem('LANGUAGE')
 if( language == null){
   axios.defaults.headers.common['lang'] = 'en'
@@ -77,35 +78,39 @@ if( language == null){
 }
 axios.defaults.headers.common['Content-Type'] = 'application/json';
 
-axios.interceptors.request.use(function(config) {
-  const token = store.getters.getAuthToken;
-  if(token) {
-    config.headers.common['oauth-token'] = `${token}`
-  }
-  return config;
-}, function(err) {
-  return Promise.reject(err);
-});
+//salman
+// axios.interceptors.request.use(function(config) {
+//   const token = store.getters.getAuthToken;
+//   if(token) {
+//     config.headers.common['oauth-token'] = `${token}`
+//   }
+//   return config;
+// }, function(err) {
+//   return Promise.reject(err);
+// });
+
 
 axios.interceptors.response.use(function (response) {
   return response;
 }, async function (error) {
-    const token = store.getters.getAuthToken;
-    if (axios.isAxiosError(error) && error.response?.status && error.response.status === 401 && token) {
-      try{
+    // const token = store.getters.getAuthToken;
+    if (axios.isAxiosError(error) && error.response?.status && error.response.status === 401) {
+       //salman     
+     try{
         await store.dispatch('refreshToken');
         // console.log( error.response);
-        const newTkn = store.getters.getAuthToken;
-        error.response.config.headers['oauth-token'] = newTkn;
+        // const newTkn = store.getters.getAuthToken;
+        // error.response.config.headers['oauth-token'] = newTkn;
         return axios.request(error.response.config);
       }catch(err){
         // console.log('rf', err);
         await store.dispatch('logout');
-        router.push('/login')
+        // router.push('/login')
       }
+      //salman
     }
 
-    if (axios.isAxiosError(error) && error.response?.status === 403 && token) {
+    if (axios.isAxiosError(error) && error.response?.status === 403) {
       router.push({name: 'AdminDashboard'})
     }
     return Promise.reject(error);
