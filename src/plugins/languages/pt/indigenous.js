@@ -1,0 +1,26 @@
+export default {
+  indigenousAndProtectedAreas: {
+    title: "Áreas Indígenas e Protegidas",
+    titleTT: "Todos os relatórios na fazenda são verificados se estão dentro de alguma área protegida ou indígena.",
+    subTitle: "Todas as fazendas do relatório são verificadas para ver se estão dentro de alguma área protegida ou indígena no ",
+    search: "Pesquisar",
+    producer: "Produtor",
+    producerTT: "Selecione o Nome do Produtor para filtrar",
+    productionPlaceAndFarmId: "Local de Produção (Fazenda) e ID da Fazenda",
+    producerName: "Nome do Produtor",
+    addressOfProduction: "Endereço de Produção",
+    area: "Área (ha)",
+    interceptsProtectedArea: "Intercepta Área Protegida",
+    interceptsIndigenousArea: "Intercepta Área Indígena.",
+    riskMitigation: "Mitigação de Riscos",
+    attachOneRiskMitigation: "Anexe um Documento de Mitigação de Riscos para Todas as Fazendas Não Conformes",
+    removeAllFlaggedFarms: "Remover Todas as Fazendas Marcadas",
+    riskMitigationTitle: "Fornecer Novo Status",
+    removeAllFlaggedFarmsTT: "Este botão removerá todas as fazendas cujo status seja 'Sim' nas colunas Interceta Área Protegida e Intercepta Área Indígena.",
+    pleaseSelectManually: "Selecione manualmente o status mitigado.",
+    attachFile: "Anexar Arquivo",
+    comments: "Comentários",
+    noInvasionOfProtectedAreas: "Sem invasão de áreas protegidas",
+    manuallyMitigated: "Mitigado manualmente",
+  }
+};

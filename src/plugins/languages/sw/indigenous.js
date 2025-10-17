@@ -1,0 +1,26 @@
+export default {
+  indigenousAndProtectedAreas: {
+    title: "Maeneo ya Asili na Yaliyohifadhiwa",
+    titleTT: "Ripoti zote shambani hukaguliwa ikiwa zipo ndani ya eneo lolote lililohifadhiwa au la kiasili.",
+    subTitle: "Mashamba yote kwenye ripoti hukaguliwa ikiwa yako ndani ya maeneo yaliyohifadhiwa au ya kiasili katika ",
+    search: "Tafuta",
+    producer: "Mzalishaji",
+    producerTT: "Chagua Jina la Mzalishaji kuchuja",
+    productionPlaceAndFarmId: "Mahali pa Uzalishaji (Shamba) & Kitambulisho cha Shamba",
+    producerName: "Jina la Mzalishaji",
+    addressOfProduction: "Anwani ya Uzalishaji",
+    area: "Eneo (ha)",
+    interceptsProtectedArea: "Kuvuka Eneo Lililohifadhiwa",
+    interceptsIndigenousArea: "Kuvuka Eneo la Kiasili",
+    riskMitigation: "Kupunguza Hatari",
+    attachOneRiskMitigation: "Ambatisha Nyaraka Moja ya Kupunguza Hatari kwa Mashamba Yote Yasiyokubaliana",
+    removeAllFlaggedFarms: "Ondoa Mashamba Yote Yaliyotambulishwa",
+    riskMitigationTitle: "Toa Hali Mpya",
+    removeAllFlaggedFarmsTT: "Kitufe hiki kitaondoa mashamba yote yenye hali ya 'Ndiyo' katika Safu ya Kuvuka Eneo Lililohifadhiwa na Kuvuka Eneo la Kiasili.",
+    pleaseSelectManually: "Tafadhali chagua hali iliyopunguzwa kwa mikono.",
+    attachFile: "Ambatisha Faili",
+    comments: "Maoni",
+    noInvasionOfProtectedAreas: "Hakuna uvamizi wa maeneo yaliyohifadhiwa",
+    manuallyMitigated: "Kupunguzwa kwa mikono",
+  }
+};

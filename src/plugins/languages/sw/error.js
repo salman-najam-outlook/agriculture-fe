@@ -1,0 +1,33 @@
+export default {
+  errors: {
+    cannotBeBlank: "Sehemu hii haiwezi kuwa tupu",
+    required: "Sehemu hii inahitajika",
+    somethingWentWrong: "Kuna kitu kimeharibika!!!",
+  },
+  logs: {
+    time: "Wakati",
+    username: "Jina la mtumiaji",
+    role: "Jukumu",
+    terminalID: "Kitambulisho cha terminal",
+    moduleAccessed: "Moduli Imefikiwa",
+    typeOfAccess: "Aina ya Ufikiaji",
+    activityLogDetails: "Maelezo ya Kumbukumbu ya Shughuli",
+    userId: "Kitambulisho cha Mtumiaji",
+    lastLogin: "Mwisho wa Kuingia",
+    geoAccPoint: "Sehemu ya ufikiaji wa kijiografia",
+    ipAdd: "Anwani ya IP",
+    filesAccessed: "Faili zimefikiwa",
+    funAccessed: "Chaguo za kukokotoa zimefikiwa",
+    webUrl: "URL ya ukurasa wa wavuti",
+    unsuccAtmp: "Jaribio la Kuingia halijafaulu",
+    view: "Tazama",
+    membershipType: "Aina ya Uanachama",
+  },
+  validation: {
+    exporterRequired: "Sehemu ya Mtoa Bidhaa inahitajika",
+    importerRequired: "Sehemu ya Mpokeaji inahitajika",
+    portOfOriginRequired: "Sehemu ya Bandari ya Asili inahitajika",
+    containerSizeNumber: "Sehemu ya Ukubwa wa Kontena lazima iwe nambari",
+    containerCapacityNumber: "Sehemu ya Uwezo wa Kontena lazima iwe nambari",
+  },
+};

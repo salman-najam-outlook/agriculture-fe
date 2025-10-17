@@ -1,0 +1,48 @@
+export default {
+  setting: {
+    profileAuthSetting: "Configuración de autenticación de perfil",
+    logInOutSetting: "Configuración de inicio de sesión/ cierre de sesión",
+    autoLogout: "Cierre automático de sesión",
+    unsuccessfulLoginAttempt: "Intentos de inicio de sesión sin éxito",
+    unsuccessfulLoginLockPeriod:
+      "Periodo de bloqueo de inicio de sesión sin éxito",
+    passCriteriaSetup: "Configuraciones de los parámetros de la contraseña",
+    passLength: "Longitud de contraseña",
+    noUniquePassRequired: "Número de contraseñas únicas requeridas",
+    maxPassAge: "Edad máxima de la contraseña",
+    acceptableRangeOfChars: "Rango aceptable de caracteres",
+    upperCase: "Mayúscula",
+    lowerCase: "Minúscula",
+    numbers: "números",
+    specialChars: "Caracteres especiales",
+    uniqueSymbols: "Símbolos únicos",
+    loadingData: "Cargando datos...",
+    currency: "Moneda",
+    codeActivationTime: "Hora de activación del código",
+    changeGlobalSetting: "Cambiar configuración global",
+    globalSetting: "Configuración global",
+    generalSetting: "Configuración general",
+    hours: "Horas",
+    days: "Días",
+    minutes: "Minutos",
+    perDay: "Por día",
+    perHour: "Por hora",
+    customised: "Personalizado",
+
+    smallFarm: "Finca pequeña",
+    inclusive: "Inclusivo",
+    from: "Desde",
+    to: "Hasta",
+    mediumFarm: "Finca mediana",
+    largeFarm: "Finca grande",
+    requiredMessage: "Este campo es obligatorio",
+    nonNegativeMessage: "Este campo debe ser no negativo",
+    wholeNumMessage: "Debe ser número entero",
+    fieldToGreaterThanFrom: "Este campo debe ser mayor que el campo 'Desde'",
+    fieldToGreaterThanFromMedium:
+      "Este campo debe ser mayor que el campo 'Hasta' de la finca pequeña",
+    fieldToGreaterThanMediumTo:
+      "Este campo debe ser mayor que el campo 'Hasta' de la finca mediana",
+  },
+}
+

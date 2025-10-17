@@ -1,0 +1,33 @@
+export default {
+  errors: {
+    cannotBeBlank: "Bidang ini tidak boleh kosong",
+    required: "Bidang ini diperlukan",
+    somethingWentWrong: "Ada kesalahan!!!",
+  },
+  logs: {
+    time: "Waktu",
+    username: "Nama Pengguna",
+    role: "Peran",
+    terminalID: "ID Terminal",
+    moduleAccessed: "Modul Diakses",
+    typeOfAccess: "Tipe Akses",
+    activityLogDetails: "Detail Log Aktivitas",
+    userId: "ID Pengguna",
+    lastLogin: "Login Terakhir",
+    geoAccPoint: "Titik Akses Geografis",
+    ipAdd: "Alamat IP",
+    filesAccessed: "File Diakses",
+    funAccessed: "Fungsi Diakses",
+    webUrl: "URL Halaman Web",
+    unsuccAtmp: "Percobaan Login Gagal",
+    view: "Lihat",
+    membershipType: "Jenis Keanggotaan",
+  },
+  validation: {
+    exporterRequired: "Kolom Eksportir wajib diisi",
+    importerRequired: "Kolom Importir wajib diisi",
+    portOfOriginRequired: "Kolom Pelabuhan Asal wajib diisi",
+    containerSizeNumber: "Kolom Ukuran Kontainer harus berupa angka",
+    containerCapacityNumber: "Kolom Kapasitas Kontainer harus berupa angka",
+  },
+};

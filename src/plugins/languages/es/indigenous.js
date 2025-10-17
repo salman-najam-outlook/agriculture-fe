@@ -1,0 +1,26 @@
+export default {
+  indigenousAndProtectedAreas: {
+    title: "Áreas Indígenas y Protegidas",
+    titleTT: "Todos los informes en la granja se verifican si están dentro de cualquier área protegida o indígena.",
+    subTitle: "Todas las granjas en el informe se verifican si están dentro de cualquier área protegida o indígena en ",
+    search: "Buscar",
+    producer: "Productor",
+    producerTT: "Seleccione el nombre del productor para filtrar",
+    productionPlaceAndFarmId: "Lugar de Producción (Granja) y ID de Granja",
+    producerName: "Nombre del Productor",
+    addressOfProduction: "Dirección de Producción",
+    area: "Área (ha)",
+    interceptsProtectedArea: "Intercepta Área Protegida",
+    interceptsIndigenousArea: "Intercepta Área Indígena",
+    riskMitigation: "Mitigación de Riesgos",
+    attachOneRiskMitigation: "Adjunte un Documento de Mitigación de Riesgos para Todas las Granjas No Cumplidoras",
+    removeAllFlaggedFarms: "Eliminar Todas las Granjas Marcadas",
+    riskMitigationTitle: "Proporcionar Nuevo Estado",
+    removeAllFlaggedFarmsTT: "Este botón eliminará todas las granjas cuyo estado sea 'Sí' en las columnas Intercepta Área Protegida e Intercepta Área Indígena.",
+    pleaseSelectManually: "Seleccione manualmente el estado mitigado.",
+    attachFile: "Adjuntar Archivo",
+    comments: "Comentarios",
+    noInvasionOfProtectedAreas: "No invasión de áreas protegidas",
+    manuallyMitigated: "Mitigado manualmente",
+  }
+};

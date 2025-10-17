@@ -1,0 +1,52 @@
+$primary-color: var(--primary-color, #00BD73);
+$secondary-color: var(--secondary-color, #117443);
+$secondary-color-light-2: var(--secondary-color-light-2, #0470E6);
+$outline-color: #97A8B8;
+$black-color: #212121;
+$gray: #787878;
+$expansion-panel-header-min-height	:60px;
+$green2: var(--green2-color, #E5F8F1);
+
+$material-light: (
+  'background': #E8E8E8
+);
+
+$btn-letter-spacing: 0px;
+
+$data-table-regular-header-font-size: 15px;
+
+.v-data-table-header {
+  background-color: var(--secondary-color, #117443) !important;
+}
+
+/* Kenya client specific styling */
+[data-theme="kenya"] .v-data-table-header {
+  background-color: #015C01 !important;
+}
+
+.v-data-table-header span {
+  text-transform: capitalize !important;
+  color: white !important; 
+} 
+
+/* Indonesian client specific icon color */
+[data-theme="indonesian"] .v-icon.v-icon {
+  color: #00559F !important;
+}
+
+.v-application .bdr.secondary2light{
+  border-color: var(--secondary-color, #117443) !important;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+

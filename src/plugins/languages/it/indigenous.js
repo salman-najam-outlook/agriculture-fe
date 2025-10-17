@@ -1,0 +1,26 @@
+export default {
+  indigenousAndProtectedAreas: {
+    title: "Aree Indigene e Protette",
+    titleTT: "Tutti i rapporti nella fattoria vengono verificati se sono presenti all'interno di aree protette o indigene.",
+    subTitle: "Tutte le fattorie nel rapporto vengono verificate se sono presenti all'interno di aree protette o indigene in ",
+    search: "Cerca",
+    producer: "Produttore",
+    producerTT: "Seleziona il Nome del Produttore per filtrare",
+    productionPlaceAndFarmId: "Luogo di Produzione (Fattoria) e ID della Fattoria",
+    producerName: "Nome del Produttore",
+    addressOfProduction: "Indirizzo di Produzione",
+    area: "Area (ha)",
+    interceptsProtectedArea: "Intercetta Area Protetta",
+    interceptsIndigenousArea: "Intercetta Area Indigena",
+    riskMitigation: "Mitigazione del Rischio",
+    attachOneRiskMitigation: "Allega un Documento di Mitigazione del Rischio per Tutte le Fattorie Non Conformi",
+    removeAllFlaggedFarms: "Rimuovi Tutte le Fattorie Contrassegnate",
+    riskMitigationTitle: "Fornisci Nuovo Stato",
+    removeAllFlaggedFarmsTT: "Questo pulsante rimuoverà tutte le fattorie il cui stato è 'Sì' nelle colonne Intercetta Area Protetta e Intercetta Area Indigena.",
+    pleaseSelectManually: "Seleziona manualmente lo stato mitigato.",
+    attachFile: "Allega File",
+    comments: "Commenti",
+    noInvasionOfProtectedAreas: "Nessuna invasione di aree protette",
+    manuallyMitigated: "Mitigato manualmente",
+  }
+};

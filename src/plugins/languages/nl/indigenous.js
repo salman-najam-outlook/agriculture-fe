@@ -1,0 +1,26 @@
+export default {
+  indigenousAndProtectedAreas: {
+    title: "Inheemse en Beschermde Gebieden",
+    titleTT: "Alle rapporten in de boerderij worden gecontroleerd of ze zich binnen een beschermd of inheems gebied bevinden.",
+    subTitle: "Alle boerderijen in het rapport worden gecontroleerd of ze zich binnen een beschermd of inheems gebied bevinden in ",
+    search: "Zoeken",
+    producer: "Producent",
+    producerTT: "Selecteer de naam van de producent om te filteren",
+    productionPlaceAndFarmId: "Productieplaats (Boerderij) en Boerderij-ID",
+    producerName: "Naam van de Producent",
+    addressOfProduction: "Adres van Productie",
+    area: "Oppervlakte (ha)",
+    interceptsProtectedArea: "Intercepteert Beschermd Gebied",
+    interceptsIndigenousArea: "Intercepteert Inheems Gebied",
+    riskMitigation: "Risico Mitigatie",
+    attachOneRiskMitigation: "Voeg één Risico Mitigatiedocument toe voor alle Niet-conforme Boerderijen",
+    removeAllFlaggedFarms: "Verwijder Alle Gemarkeerde Boerderijen",
+    riskMitigationTitle: "Geef Nieuwe Status",
+    removeAllFlaggedFarmsTT: "Deze knop verwijdert alle boerderijen waarvan de status 'Ja' is in de kolommen Intercepteert Beschermd Gebied en Intercepteert Inheems Gebied.",
+    pleaseSelectManually: "Selecteer handmatig de gematigde status.",
+    attachFile: "Bestand Bijvoegen",
+    comments: "Opmerkingen",
+    noInvasionOfProtectedAreas: "Geen invasie van beschermde gebieden",
+    manuallyMitigated: "Manueel gematigd",
+  }
+};

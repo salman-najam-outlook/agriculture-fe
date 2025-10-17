@@ -1,0 +1,127 @@
+@import url('../../styles/variables.scss');
+
+.errorf {
+    color: #ff5252 !important;
+    font-size: 10px;
+    /* margin-top: 4px; */
+    font-family: Poppins-Medium;
+    position: absolute;
+    /* bottom: -17px; */
+}
+
+.capitlize {
+    text-transform: capitalize;
+}
+
+.page-title{
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin:0px 0px 15px;
+}
+
+.tabs-section {
+	margin: 20px 0px;
+}
+/* .tabs-section .v-slide-group__content.v-tabs-bar__content {
+    border-bottom: 1px solid #ccc;
+} */
+
+.text-align-left {
+    text-align: left;
+}
+
+.text-align-center {
+    text-align: left;
+}
+
+.border-bottom {
+    border-bottom: 1px solid #ccc;
+}
+header{
+    /* z-index: 9999 !important; */
+}
+
+/* Kenya client specific styling */
+.kenya-green-bg {
+    background-color: #015C01 !important;
+}
+
+.green-button {
+    background-color: #C1FFE7 !important;
+    /* Green background */
+    border: 2px solid #489E16 !important;
+    /* Red border */
+    color: #489E16 !important;
+  }
+  
+  .green-shadow {
+    color: #00BD73 !important;
+  }
+  
+  .red-button {
+    background-color: #FDEBEB !important;
+    /* Green background */
+    border: 2px solid #DA3D3D !important;
+    /* Red border */
+    color: #DA3D3D !important;
+  
+  }
+  
+  .deep-orange-darken-1-button {
+    background-color: #FDEBEB !important;
+    /* Green background */
+    border: 2px solid #ff7b53 !important;
+    /* Red border */
+    color: #ff7b53 !important;
+  
+  }
+  
+  .orange-button {
+    background-color: #FFF7EC !important;
+    /* Green background */
+    border: 2px solid #FFA826 !important;
+    /* Red border */
+    color: #FFA826 !important;
+  
+  }
+  
+  .medium-button{
+    background-color: #FFCEB3 !important;
+    border: 2px solid #F06B20 !important;
+    color: #F06B20 !important;
+  }
+  
+  .very-high-button{
+    background-color: #FF8F8F !important;
+    border: 2px solid #8B0000 !important;
+    color: #8B0000 !important;
+  }
+  
+  .very-low-button{
+    background-color: #FFFCEC !important;
+    border: 2px solid #F49238 !important;
+    color: #F49238 !important;
+  }
+  
+  .manually-button{
+    background-color: #E2FFF4 !important;
+    border: 2px solid #00BD73 !important;
+    color: #00BD73 !important;
+  }
+
+  .gray-button {
+    background-color: #e8e8e8 !important;
+    border: 2px solid #000000 !important;
+    color: #000000 !important;
+  }
+
+  .cursor-pointer{
+    cursor: pointer;
+  }
+  
+
+  .theme--dark.v-btn.v-btn--disabled.v-btn--has-bg{
+    background-color: #CCCCCC !important;
+    color: rgba(0, 0, 0, 0.26) !important;
+  }

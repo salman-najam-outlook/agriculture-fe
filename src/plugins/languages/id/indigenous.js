@@ -1,0 +1,26 @@
+export default {
+  indigenousAndProtectedAreas: {
+    title: "Wilayah Adat & Dilindungi",
+    titleTT: "Semua laporan di pertanian diperiksa apakah berada di dalam wilayah yang dilindungi atau adat.",
+    subTitle: "Semua pertanian dalam laporan diperiksa apakah berada di dalam wilayah yang dilindungi atau adat di ",
+    search: "Cari",
+    producer: "Produsen",
+    producerTT: "Pilih Nama Produsen untuk memfilter",
+    productionPlaceAndFarmId: "Tempat Produksi (Pertanian) & ID Pertanian",
+    producerName: "Nama Produsen",
+    addressOfProduction: "Alamat Produksi",
+    area: "Area (ha)",
+    interceptsProtectedArea: "Melintasi Wilayah Dilindungi",
+    interceptsIndigenousArea: "Melintasi Wilayah Adat",
+    riskMitigation: "Mitigasi Risiko",
+    attachOneRiskMitigation: "Lampirkan Satu Dokumen Mitigasi Risiko untuk Semua Pertanian Tidak Sesuai",
+    removeAllFlaggedFarms: "Hapus Semua Pertanian yang Ditandai",
+    riskMitigationTitle: "Berikan Status Baru",
+    removeAllFlaggedFarmsTT: "Tombol ini akan menghapus semua pertanian yang statusnya 'Ya' di Kolom Melintasi Wilayah Dilindungi dan Melintasi Wilayah Adat.",
+    pleaseSelectManually: "Pilih status yang dimulai secara manual.",
+    attachFile: "Lampirkan File",
+    comments: "Komentar",  
+    noInvasionOfProtectedAreas: "Tidak ada invasi wilayah dilindungi",
+    manuallyMitigated: "Dimitigasi secara manual",
+  }
+};
