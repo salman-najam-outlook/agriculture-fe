@@ -2076,9 +2076,11 @@ export default {
             const { page, limit, search } = payload
             axios.get(DEFORESTRATION_API_BASE_URL + `/production-place/dds-farms?page=${page}&limit=${limit}&search=${search}`, {
                 headers: {
-                    "Content-Type": "application/json",
+                    "Content-Type": "application/json",                
                     authorization: axiosConfig.headers.authorization,
-                    'oauth-token': axiosConfig.headers.authorization,
+                    //salman
+                    // 'oauth-token': axiosConfig.headers.authorization,
+                    //salman
                     "lang": lang
                 }
             }).then(async ({ data }) => {

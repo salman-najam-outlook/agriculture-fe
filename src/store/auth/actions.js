@@ -40,19 +40,20 @@ async autoLogin(context) {
     // localStorage.removeItem('token');
     // localStorage.removeItem('user');
     // localStorage.removeItem('refreshtoken');
-    context.commit("unsetUser");
     // Clear farmers data
-    context.dispatch("memberData/clearFarmersOptions", null, { root: true });
+ 
     //salman
-    router.push('/login')
+    await axios.post('/logout')
+        .then( (response) => {
+            if(response.data.success) {
+              context.commit("unsetUser");
+              localStorage.removeItem('isAuthenticated');
+              router.push('/login')
+              context.dispatch("memberData/clearFarmersOptions", null, { root: true });
+            }
+        });
     //salman
-    // await axios.post('/logout',{})
-    //     .then( (response) => {
-    //         console.log(response)
-    //     })
-    //     .catch( () => {
-    //         context.commit('unsetUser');
-    //     });
+       
   },
 
   async forgotPassword(context, payLoad) {

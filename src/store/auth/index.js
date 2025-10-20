@@ -65,7 +65,6 @@ export default {
             // localStorage.removeItem("token");
             // localStorage.removeItem("refreshtoken");        
             // localStorage.removeItem("modules");
-            localStorage.removeItem('isAuthenticated');
              //salman
             axiosConfig.headers.authorization = null;
             state.authenticated = false;

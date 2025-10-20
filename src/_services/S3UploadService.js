@@ -103,7 +103,9 @@ export default {
           isPublic: true,
           directory: folder,
         },
-        { headers: { "oauth-token": localStorage.getItem("token") } }
+        //salman
+        // { headers: { "oauth-token": localStorage.getItem("token") } }
+        //salman
       );
 
       return response.data.data;
@@ -130,7 +132,9 @@ export default {
       const response = await axios.post(
         `${API_BASE_URL}/media/url`,
         { key, isPublic },
-        { headers: { "oauth-token": localStorage.getItem("token") } }
+        //salman
+        // { headers: { "oauth-token": localStorage.getItem("token") } }
+        //salman
       );
 
       return response.data.data;

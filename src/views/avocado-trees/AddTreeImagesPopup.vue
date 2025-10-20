@@ -55,12 +55,14 @@ export default {
             addRemoveLinks: true,
             autoProcessQueue: true,
             paramName: 'treesFile',
-            headers: {
-              'oauth-token': this.$store.getters.getAuthToken,
-            },
+            //salman
+            // headers: {
+            //   'oauth-token': this.$store.getters.getAuthToken,
+            // },
             // renameFile: function (file) {
             //     return `${file.name}_${new Date().getTime()}`;
             // }
+            //salman
           },
           notes:"",
           treeImage: "",
