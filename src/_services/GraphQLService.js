@@ -3,17 +3,16 @@ import axios from "axios";
 import router from "../router";
 
 const DEFORESTATION_BASE_URL =
-  process.env.VUE_APP_DEFORESTATION_BASE_URL ||
-  "https://cf-deforestation.dimitra.dev/graphql";
+  "http://localhost:4044/graphql"
 // const DEFORESTRATION_API_BASE_URL =
 //   process.env.VUE_APP_DEFORESTRATION_API_BASE_URL ||
 //   "https://cf-deforestation.dimitra.dev/api";
-const ttk = localStorage.getItem('token');
+// const ttk = localStorage.getItem('token');
 const axiosConfig = {
     baseURL: DEFORESTATION_BASE_URL,
     headers: {
         'Content-Type': 'application/json',
-        authorization: ttk || store?.getters?.getAuthToken,
+        // authorization: ttk || store?.getters?.getAuthToken,
         screensize: `${window.outerWidth}x${window.outerHeight}`,
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         lang: localStorage.getItem("LANGUAGE") ?? 'en',
@@ -21,16 +20,16 @@ const axiosConfig = {
 };
 
 const axiosInstance = axios.create(axiosConfig);
-
+axiosInstance.defaults.withCredentials = true;
 axiosInstance.interceptors.request.use(axiosConfig, error => {
   return Promise.reject(error);
 });
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const storageToken = localStorage.getItem('token');
-    const authToken = storageToken || store.getters.getAuthToken;
-    config.headers['authorization'] = authToken || store.getters.getAuthToken;
+    // const storageToken = localStorage.getItem('token');
+    // const authToken = storageToken || store.getters.getAuthToken;
+    // config.headers['authorization'] = authToken || store.getters.getAuthToken;
     return config;
   },
   (error) => {
@@ -51,7 +50,7 @@ async function callPostAPI(query, variables){
 
 async function postGraphqlQuery(query, variables, retry = true) {
   try {
-    console.log("variables", variables)    
+    console.log("variables", variables)   
     const result = await axiosInstance.post(
       DEFORESTATION_BASE_URL,
       {
@@ -61,12 +60,12 @@ async function postGraphqlQuery(query, variables, retry = true) {
     );
     return result.data;
   } catch (error) {
-    const token = store.getters.getAuthToken;
+    // const token = store.getters.getAuthToken;
     // Map dev errors to user messages
     const devMessage = error.response?.data?.errors?.[0]?.message;
     let userMessage = "Something went wrong. Please try again later.";
 
-    if (error.response?.status === 500 && token && retry) {
+    if (error.response?.status === 500 && retry) {
       const message = error.response?.data?.errors?.[0]?.message?.toLowerCase();
 
       // Retry only if message says token is invalid/expired
@@ -78,14 +77,14 @@ async function postGraphqlQuery(query, variables, retry = true) {
           return await postGraphqlQuery(query, variables, false);
         } catch (err) {
           await store.dispatch("logout");
-          router.push("/login");
+          // router.push("/login");
           userMessage = "Session expired. Please log in again.";
         }
       }
 
       userMessage = "Something went wrong on the server. Please try again later.";
     }
-    if (error.response?.data?.errors?.length && error.response?.data?.errors[0].statusCode === 401 && token) {
+    if (error.response?.data?.errors?.length && error.response?.data?.errors[0].statusCode === 401 ) {
       try{
         await store.dispatch('refreshToken');
         // console.log( error.response);
@@ -94,11 +93,11 @@ async function postGraphqlQuery(query, variables, retry = true) {
       }catch(err){
         // console.log('rf', err);
         await store.dispatch('logout');
-        router.push('/login')
+        // router.push('/login')
       }
     }
 
-    if (error.response?.data?.errors?.length && error.response?.data?.errors[0].statusCode === 403 && token) {
+    if (error.response?.data?.errors?.length && error.response?.data?.errors[0].statusCode === 403) {
       router.push({name: 'AdminDashboard'})
     }
 
