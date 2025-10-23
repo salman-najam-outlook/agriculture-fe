@@ -142,18 +142,46 @@ function setDynamicThemeColors() {
   }
   
   // Also update Vuetify theme directly if available
-  if (window.$vuetify && window.$vuetify.theme) {
-    window.$vuetify.theme.themes.light.primary = theme.primary;
-    window.$vuetify.theme.themes.light.secondary = theme.secondary;
-    window.$vuetify.theme.themes.light.secondary2light = theme.secondary2light;
-    window.$vuetify.theme.themes.light.green2 = theme.green2;
-    window.$vuetify.theme.themes.light.secondary2light = theme.secondary2light;
+  // if (window.$vuetify && window.$vuetify.theme) {
+  //   window.$vuetify.theme.themes.light.primary = theme.primary;
+  //   window.$vuetify.theme.themes.light.secondary = theme.secondary;
+  //   window.$vuetify.theme.themes.light.secondary2light = theme.secondary2light;
+  //   window.$vuetify.theme.themes.light.green2 = theme.green2;
+  //   window.$vuetify.theme.themes.light.secondary2light = theme.secondary2light;
+  // }
+  // hooked Vuetify’s theme into the global window so it can be updated
+  if (vuetify?.framework?.theme?.themes?.light) {
+    const lightTheme = vuetify.framework.theme.themes.light;
+    lightTheme.primary = theme.primary;
+    lightTheme.secondary = theme.secondary;
+    lightTheme.secondary2light = theme.secondary2light;
+    lightTheme.green2 = theme.green2;
+    lightTheme.primaryColor = theme.primary;
+    lightTheme.secondaryColor = theme.secondary;
+    lightTheme.green2Color = theme.green2;
   }
   
   console.log('Theme updated:', theme, 'Indonesian client:', isIndonesian, 'Kenya client:', isKenya);
 }
 
-setDynamicThemeColors();
+let themeSynced = false;
+let lastOrg = null;
+ 
+store.watch(
+  () => store.getters.getUser,
+  (user) => {
+    const orgName = user?.user_organization?.name;
+    if (!orgName || orgName === lastOrg) return;
+    lastOrg = orgName;
+    themeSynced = true;
+    Vue.nextTick(() => setDynamicThemeColors());
+  },
+  { immediate: true, deep: true }
+);
+ 
+if (!themeSynced) {
+  setDynamicThemeColors();
+}
 
 new Vue({
   router,

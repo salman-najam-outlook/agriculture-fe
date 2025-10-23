@@ -209,8 +209,8 @@ export default {
 
       try {
         // Step 1: Get the pre-signed URL
-        const token = localStorage.getItem('token');
-        const { data } = await FileService.uploadFile(token, file, true, 'esg');
+        // const token = localStorage.getItem('token');
+        const { data } = await FileService.uploadFile( file, true, 'esg');
         const { url, key } = data;
 
         // Step 2: Upload the file using the pre-signed URL

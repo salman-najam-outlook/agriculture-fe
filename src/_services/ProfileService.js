@@ -1,4 +1,5 @@
 import axios  from "axios"
+import store from "../store";
 
 export default {
     async getUserData(id) {
@@ -19,7 +20,8 @@ export default {
     },
 
     checkRole(role) {
-        const user = JSON.parse(localStorage.getItem("user"));
+        // const user = JSON.parse(localStorage.getItem("user"));
+        const user = store.getters.getUser;
         let hasRole = false;
 
         for (const roleObj of user.user_role_assoc) {

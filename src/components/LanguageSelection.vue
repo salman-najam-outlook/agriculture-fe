@@ -23,6 +23,7 @@
 <script>
 import i18n from '@/plugins/i18n';
 import axios from 'axios'
+import store from '../store/index'
 
 export default {
     computed: {
@@ -61,21 +62,21 @@ export default {
         i18n.locale = locale;
       },
       async reload(){
-        if(localStorage.token){
+        // if(localStorage.token){
             const res = await axios.get('/getSideBarData', {
             headers: {
               lang: this.language
             }
           })
-          let user = localStorage.getItem('user')
-          user = JSON.parse(user)
+          const user = store.getters.getUser;
+          // user = JSON.parse(user)
           user.sideBarMenu = res.data.data
-          localStorage.setItem('user', JSON.stringify(user))
+          // localStorage.setItem('user', JSON.stringify(user))
           this.$router.go()
-        }else{
-          localStorage.removeItem("SIDEBAR_NOT_SYNC")
-          localStorage.setItem("SIDEBAR_NOT_SYNC", true)
-        }
+        // }else{
+          // localStorage.removeItem("SIDEBAR_NOT_SYNC")
+          // localStorage.setItem("SIDEBAR_NOT_SYNC", true)
+        // }
       }
     },
     props: {
