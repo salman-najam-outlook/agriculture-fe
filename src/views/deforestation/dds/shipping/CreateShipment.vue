@@ -413,7 +413,8 @@ export default {
     },
     mounted() {
         this.loading = false;
-        const exporter = JSON.parse(localStorage.getItem('user'))
+        // const exporter = JSON.parse(localStorage.getItem('user'))
+        const exporter = this.$store.getters.getUser
         if(exporter){
             this.shipment.exporter = exporter.firstName + ' ' + exporter.middleName  + ' ' + exporter.lastName
         }

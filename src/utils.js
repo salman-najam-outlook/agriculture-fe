@@ -2,6 +2,7 @@ import _ from "lodash";
 import moment from 'moment';
 import Vue from 'vue';
 import { PTSI_ADMIN_ROLES } from "./constants/roles";  
+import store from "./store";
 
 export function convertSizeIntoBaseUnit(farmSize) {
   const currentAreaUnit = JSON.parse(localStorage.getItem("gs"))?.areaUnit;
@@ -199,39 +200,45 @@ export function isDeforestationExpired(date, eudrSetting) {
 }
 
 export function isIndonesianClient() {
-  const user = JSON.parse(localStorage.getItem('user'));
+  const user = store.getters.getUser;
   if(!user) return false;
+  // const user = JSON.parse(localStorage.getItem('user'));
   return user?.user_organization?.name == 'PT Surveyor Indonesia'
   //return user.user_role_assoc.some(role => role.id === 'indonesia_admin' || role.id === 'dds_exporter' || role.id === 'dds_ptsi');
 }
 
 export function isKenyaClient() {
-  const user = JSON.parse(localStorage.getItem('user'));
+  const user = store.getters.getUser;
   if(!user) return false;
+  // const user = JSON.parse(localStorage.getItem('user'));
   return (user?.user_organization?.name == 'National Coffee Cooperative Union' || user?.user_organization?.name == 'test_org33412');
   // return user.user_role_assoc.some(role => role.id === 'naccu_kenya_admin' || role.id === 'naccu_naccu');
 }
 
 export function currentRoles() {
-  const user = JSON.parse(localStorage.getItem('user'));
+  // const user = JSON.parse(localStorage.getItem('user'));
+  const user = store.getters.getUser;
   if(!user) return [];
   return user.user_role_assoc.map(role => role.id);
 }
 
 export function currentUser() {
-  const user = JSON.parse(localStorage.getItem('user'));
+  // const user = JSON.parse(localStorage.getItem('user'));
+  const user = store.getters.getUser;
   if(!user) return {};
   return user
 }
 
 export function isDdsExporter() {
-  const user = JSON.parse(localStorage.getItem('user'));
+  // const user = JSON.parse(localStorage.getItem('user'));
+  const user = store.getters.getUser;
   if(!user) return false;
   return user.user_role_assoc.some(role => role.id === 'dds_exporter');
 }
 
 export function isPtsiApproval(){
-  const user = JSON.parse(localStorage.getItem('user'));
+  // const user = JSON.parse(localStorage.getItem('user'));
+  const user = store.getters.getUser;
   if(!user) return false;
   return user.user_role_assoc.some(role => PTSI_ADMIN_ROLES.includes(role.id));
 }
@@ -261,8 +268,10 @@ export function decodeHtmlEntities(str) {
  */
 export function checkPermission(moduleId) {
   try {
-    const moduleAndPermissions = JSON.parse(localStorage.getItem('moduleAndPermissions') || '[]');
-    const rolesIds = JSON.parse(localStorage.getItem('user') || '[]')?.user_role_assoc?.map(role => role.id);
+    // const moduleAndPermissions = JSON.parse(localStorage.getItem('moduleAndPermissions') || '[]');
+    const moduleAndPermissions = store.getters.getUser.moduleAndPermissions || []
+    // const rolesIds = JSON.parse(localStorage.getItem('user') || '[]')?.user_role_assoc?.map(role => role.id);
+    const rolesIds = store.getters.getUser?.user_role_assoc?.map(role => role.id) || [];
     if (!moduleAndPermissions || !Array.isArray(moduleAndPermissions) || !rolesIds.length) {
       return false;
     }
