@@ -36,7 +36,7 @@ export default {
         return await axios.post(`${apiUrl}/${endpoint}`, data, progressConfig).then(({data}) => data).catch(error => Promise.reject(error));
     },
 
-    async uploadFile(token, file, isPublic = true, directoryName){
+    async uploadFile( file, isPublic = true, directoryName){
         return await axios.post(`${apiUrl}/media/presigned-url`,
             {
                 filename: file.name,

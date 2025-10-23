@@ -57,6 +57,7 @@
 <script>
 import UserService from '@/_services/UserService';
 import LoadingMixin from '@/mixins/LoadingMixin';
+import store from '../../../store';
 
 export default {
   name: 'AddUser',
@@ -100,7 +101,8 @@ export default {
   methods: {
     setUserDataFromLocalStorage() {
       try {
-        const userData = JSON.parse(localStorage.getItem('user'));
+        // const userData = JSON.parse(localStorage.getItem('user'));
+        let userData = store.getters.getUser
         if (userData && userData?.subOrg) {
           this.organizationCode = userData?.subOrg?.code;
           this.subOrgUserId = userData?.id.toString();

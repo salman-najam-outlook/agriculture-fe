@@ -142,6 +142,7 @@ import DeforestationService from "@/_services/DeforestationService";
 import loadingMixin from "@/mixins/LoadingMixin";
 import debounce from 'lodash/debounce';
 import ConfirmBox from "@/components/ConfirmBox";
+import store from "../../../../store";
 
 
 export default {
@@ -282,8 +283,9 @@ export default {
       this.assessmentLoading = true;
       try {
 
-        const loggedInUser = localStorage.getItem('user')
-        const user = JSON.parse(loggedInUser);
+        // const loggedInUser = localStorage.getItem('user')
+        // const user = JSON.parse(loggedInUser);
+        const user = store.getters.getUser;
         const canSort = this.tableOptions.sortBy.length === 1 && this.tableOptions.sortDesc.length === 1;
         let params = {
           page: this.tableOptions.page,
@@ -341,8 +343,9 @@ export default {
       }
       if(type === 'existing', selectedAssessments?.length){
         this.startLoading()
-        const loggedInUser = localStorage.getItem('user')
-        const user = JSON.parse(loggedInUser);
+        // const loggedInUser = localStorage.getItem('user')
+        // const user = JSON.parse(loggedInUser);
+        const user = store.getters.getUser;
         try{
         const res = await DeforestationService.createFromDefaultAssessment({
           orgId: user.user_organization.id,
