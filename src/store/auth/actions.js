@@ -10,11 +10,53 @@ export default {
           response = response.data;
           if (response.success) {
             const user = response.data; 
+            
+            // Check if MFA is required
+            if (user.mfa_required) {
+              // Return MFA data without setting user data
+              resolve({ 
+                success: true,
+                data: user,
+                message: response.message
+              });
+              return;
+            }
+            
+            // Regular login flow (no MFA)
             context.commit("setUserData", user);
             localStorage.setItem('isAuthenticated', 'true');
             resolve({ success: "ok" });
           } else {
             reject(response.message);
+          }
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  },
+
+  async verifyMfa(context, data) {
+    return new Promise((resolve, reject) => {
+      axios
+        .post("/verify-mfa", data)
+        .then((response) => {
+          response = response.data;
+          if (response.success) {
+            const user = response.data;
+            // Set user data after successful MFA verification
+            context.commit("setUserData", user);
+            localStorage.setItem('isAuthenticated', 'true');
+            resolve({ 
+              success: true, 
+              data: user,
+              message: response.message
+            });
+          } else {
+            resolve({
+              success: false,
+              message: response.message || 'Invalid verification code'
+            });
           }
         })
         .catch((err) => {

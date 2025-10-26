@@ -207,6 +207,65 @@
                                     </v-radio-group>
                                 </v-col>
                             </v-row>
+
+                            <!-- MFA Security Settings Section -->
+                            <v-row class="mt-4">
+                                <v-col cols="12">
+                                    <v-divider class="mb-4"></v-divider>
+                                    <h3 class="text-h6 mb-4">
+                                        <v-icon class="mr-2">mdi-shield-lock</v-icon>
+                                        Security Settings
+                                    </h3>
+                                </v-col>
+                                <v-col cols="12" md="6" class="py-0">
+                                    <label for="mfa">
+                                        Multi-Factor Authentication (MFA)
+                                        <v-tooltip bottom>
+                                            <template v-slot:activator="{ on, attrs }">
+                                                <v-icon small v-bind="attrs" v-on="on" class="ml-1">mdi-information</v-icon>
+                                            </template>
+                                            <span>Add an extra layer of security to user account</span>
+                                        </v-tooltip>
+                                    </label>
+                                    <div class="d-flex align-center mt-2">
+                                        <v-switch
+                                            v-model="editedUser.is_mfa_enabled"
+                                            :label="editedUser.is_mfa_enabled ? 'Enabled' : 'Disabled'"
+                                            color="primary"
+                                            @change="handleMfaToggle"
+                                            class="mt-0"
+                                        ></v-switch>
+                                    </div>
+                                    <p class="caption grey--text">
+                                        When enabled, users will need to enter a verification code during login.
+                                    </p>
+                                </v-col>
+                                <v-col cols="12" md="6" class="py-0" v-if="editedUser.is_mfa_enabled">
+                                    <label for="mfaMethod">Verification Method<span class="red--text">*</span></label>
+                                    <v-select
+                                        v-model="editedUser.mfa_method"
+                                        :items="mfaMethods"
+                                        item-text="label"
+                                        item-value="value"
+                                        outlined
+                                        dense
+                                        :disabled="!editedUser.is_mfa_enabled"
+                                        :placeholder="$t('selectMfaMethod')"
+                                    ></v-select>
+                                    <p class="caption grey--text" v-if="editedUser.mfa_method === 'email'">
+                                        Verification code will be sent to: <strong>{{ editedUser.email }}</strong>
+                                    </p>
+                                    <p class="caption grey--text" v-else-if="editedUser.mfa_method === 'mobile'">
+                                        Verification code will be sent to: <strong>{{ editedUser.mobile }}</strong>
+                                    </p>
+                                </v-col>
+                                <v-col cols="12" v-if="editedUser.is_mfa_enabled">
+                                    <v-chip class="ma-2" color="success" outlined>
+                                        <v-icon left small>mdi-check-circle</v-icon>
+                                        MFA Protected via {{ editedUser.mfa_method === 'email' ? 'Email' : 'SMS' }}
+                                    </v-chip>
+                                </v-col>
+                            </v-row>
                             <v-card-actions class="mt-10">
                                 <v-spacer></v-spacer>
                                 <v-btn @click="closeModal" outlined right height="44" width="116" depressed color="primary">
@@ -268,6 +327,10 @@ import _ from 'lodash'
                 errors: { firstName: '', lastName: '', email: '', mobile: '', password: '', department: '', role: '', country: "", state: "",city: "",},
                 editedUser: {},
                 password: '',
+                mfaMethods: [
+                    { label: 'Email', value: 'email' },
+                    { label: 'SMS/Mobile', value: 'mobile', disabled: true }
+                ],
                 rules: {
                     firstName: [
                         v => (!!v || v != '' || v != null) || this.$t('addEdituser.firstNameRequired'),
@@ -313,6 +376,10 @@ import _ from 'lodash'
                     this.editedUser.role_id = this.user.user_role_assoc.length > 0 ? this.user.user_role_assoc[0].id : ''
                     this.editedUser.department_id = this.user.user_dept_assoc.length > 0 ? this.user.user_dept_assoc[0].id : ''
                     this.editedUser.countryCode = this.user.countryCode 
+                    
+                    // Load MFA settings
+                    this.editedUser.is_mfa_enabled = this.user.is_mfa_enabled || false;
+                    this.editedUser.mfa_method = this.user.mfa_method || 'email';
                     // console.log('user', this.user)
                     
 
@@ -321,6 +388,12 @@ import _ from 'lodash'
                         this.getState(_country)
                     }
                     console.log('editedUser', this.editedUser)
+            },
+            handleMfaToggle(val) {
+                this.editedUser = {
+                    ...this.editedUser,
+                    is_mfa_enabled: val,
+                };
             },
             updateUser() {
               
@@ -332,11 +405,39 @@ import _ from 'lodash'
                 this.editedUser.state = this.editedUser.stateId;
                 this.editedUser.countryCode = typeof this.editedUser.countryId == "object"? this.editedUser.countryId.dial_code : this.editedUser.dial_code;
 
+                // Validate MFA settings
+                if (this.editedUser.is_mfa_enabled) {
+                    if (this.editedUser.mfa_method === 'email' && !this.editedUser.email) {
+                        this.$notify({
+                            title: 'Validation Error',
+                            text: 'Email is required when MFA method is Email',
+                            type: 'error'
+                        });
+                        return;
+                    }
+                    if (this.editedUser.mfa_method === 'mobile' && !this.editedUser.mobile) {
+                        this.$notify({
+                            title: 'Validation Error',
+                            text: 'Mobile number is required when MFA method is SMS',
+                            type: 'error'
+                        });
+                        return;
+                    }
+                }
+
                 if(!this.$refs.userEdit.validate()) return;
                 this.startLoading()
                 UserService.updateUser(this.editedUser.userId, this.editedUser)
                 .then( data => {
                     if(data.success){
+                        // Show specific message for MFA changes
+                        if (this.editedUser.is_mfa_enabled) {
+                            this.$notify({
+                                title: 'Success',
+                                text: `User updated successfully. MFA has been enabled. User will receive verification codes via ${this.editedUser.mfa_method === 'email' ? 'email' : 'SMS'} on next login.`,
+                                type: 'success'
+                            });
+                        }
                         this.$emit('userUpdated', { success:true, message: data.message});
                     }else{
                         this.$emit('userUpdated', { success:false, message: data.message});
