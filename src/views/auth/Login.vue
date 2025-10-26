@@ -18,7 +18,8 @@
 						</h2> -->
 					</div>
 					<div class="flex-direction-box">
-					<div class="login-from vertical-center">
+					<!-- Regular Login Form (shown when MFA not required) -->
+					<div class="login-from vertical-center" v-if="!mfaRequired">
 						<h2>{{ $t('login.welcomeMsg') }}</h2>
 						<!-- <h2>Welcome! Log In</h2> -->
 						<p class="gray--text">{{ $t('login.info') }}</p>
@@ -56,6 +57,93 @@
 							</div>
 						</form>
 					</div>
+
+					<!-- MFA Verification Form (shown when MFA is required) -->
+					<div class="login-from vertical-center" v-else>
+						<div class="mfa-header text-center mb-6">
+							<v-icon color="primary" size="64" class="mb-4">mdi-shield-check</v-icon>
+							<h2 class="mb-2">Two-Factor Authentication</h2>
+							<p class="grey--text">
+								We've sent a verification code to your 
+								<strong>{{ mfaMethodLabel }}</strong>
+							</p>
+							<p class="warning--text caption mt-2">
+								Code expires in: <strong>{{ otpExpiresIn }}</strong>
+							</p>
+						</div>
+						<form @submit.prevent="handleMfaVerification">
+							<div class="login-from-fill">
+								<!-- OTP Error Message -->
+								<v-alert v-if="otpError" type="error" dense class="mb-4">
+									{{ otpError }}
+								</v-alert>
+								
+								<!-- OTP Input -->
+								<div class="form-group">
+									<label>Enter Verification Code</label>
+									<v-text-field
+										v-model="otpForm.otp"
+										outlined
+										placeholder="000000"
+										maxlength="6"
+										class="otp-input text-center"
+										prepend-inner-icon="mdi-numeric"
+										:error-messages="otpError"
+										autofocus
+										autocomplete="one-time-code"
+									></v-text-field>
+									<p class="caption grey--text text-center">
+										Enter the 6-digit code sent to your {{ mfaMethodLabel }}
+									</p>
+								</div>
+								
+								<!-- Submit Button -->
+								<div>
+									<v-btn 
+										type="submit" 
+										block 
+										color="primary" 
+										class="mt-3"
+										:disabled="otpForm.otp.length !== 6"
+										:loading="loading"
+									>
+										Verify & Sign In
+									</v-btn>
+								</div>
+								
+								<!-- Resend Code Button -->
+								<div class="text-center mt-4">
+									<v-btn 
+										text 
+										color="primary"
+										@click="resendOtp"
+										:disabled="resendCooldown > 0"
+										small
+									>
+										<template v-if="resendCooldown > 0">
+											Resend code in {{ resendCooldown }}s
+										</template>
+										<template v-else>
+											Didn't receive code? Resend
+										</template>
+									</v-btn>
+								</div>
+								
+								<!-- Back to Login -->
+								<div class="text-center mt-2">
+									<v-btn 
+										text 
+										color="grey"
+										@click="cancelMfa"
+										small
+									>
+										<v-icon left small>mdi-arrow-left</v-icon>
+										Back to login
+									</v-btn>
+								</div>
+							</div>
+						</form>
+					</div>
 				</div>
 				</div>
 			</v-col>
@@ -87,6 +175,18 @@ import { ALL_PTSI_ROLES } from '../../constants/roles';
 		},
 		loginBtn() {
 			return (this.captcha && this.username && this.password)
+		},
+		otpExpiresIn() {
+			if (!this.mfaData?.expires_at) return '';
+			
+			const expiresAt = new Date(this.mfaData.expires_at);
+			const now = new Date();
+			const diffMinutes = Math.ceil((expiresAt - now) / 1000 / 60);
+			
+			return diffMinutes > 0 ? `${diffMinutes} minute${diffMinutes > 1 ? 's' : ''}` : 'expired';
+		},
+		mfaMethodLabel() {
+			return this.mfaData?.mfa_method === 'email' ? 'email' : 'mobile phone';
 		}
 	},
     data() {
@@ -101,6 +201,15 @@ import { ALL_PTSI_ROLES } from '../../constants/roles';
 		authErr: '',
 		captcha: false,
 		captchaCode: '',
+		// MFA-related data
+		mfaRequired: false,
+		mfaData: null,
+		otpForm: {
+			otp: '',
+			user_id: null
+		},
+		otpError: '',
+		resendCooldown: 0,
       }
     },
     methods: {
@@ -135,7 +244,28 @@ import { ALL_PTSI_ROLES } from '../../constants/roles';
 			  	password: this.password,
 				captcha: this.captchaCode
 		  	}
-			this.$store.dispatch('checkAuth', authData).then(() => {
+			this.$store.dispatch('checkAuth', authData).then((response) => {
+				// Check if MFA is required from the response
+				const data = response?.data || response;
+				if (data?.mfa_required) {
+					// Store MFA data and show verification form
+					this.mfaRequired = true;
+					this.mfaData = data;
+					this.otpForm.user_id = data.user_id;
+					
+					// Clear password for security
+					this.password = '';
+					
+					// Show success message
+					this.$notify({
+						title: 'MFA Required',
+						text: data.message || 'Please check your email/phone for the verification code.',
+						type: 'info'
+					});
+					
+					this.stopLoading();
+					return;
+				}
 				const userPermittedRoles = this.$store?.state?.auth?.user?.user_role_assoc?.map(role => role.id)
 				const userPermittedRoleType = this.$store?.state?.auth?.user?.user_role_assoc?.map(role => role.role_type)
 
@@ -227,6 +357,145 @@ import { ALL_PTSI_ROLES } from '../../constants/roles';
 					this.stopLoading();
 				});
       	},
+		// Handle MFA verification
+		async handleMfaVerification() {
+			try {
+				this.startLoading();
+				this.otpError = '';
+				
+				const response = await this.$store.dispatch('verifyMfa', {
+					user_id: this.otpForm.user_id,
+					otp: this.otpForm.otp
+				});
+				
+				if (response.success) {
+					// MFA verified successfully - proceed with normal login flow
+					const data = response.data;
+					const userPermittedRoles = data?.user_role_assoc?.map(role => role.id) || [];
+					const userPermittedRoleType = data?.user_role_assoc?.map(role => role.role_type) || [];
+
+					this.$notify({
+						title: 'Success',
+						text: 'Login successful!',
+						type: 'success'
+					});
+
+					// Route based on role (same logic as regular login)
+					if(userPermittedRoles.includes("super_admin")) {
+						this.$router.replace({ name: "regionalRiskAssessment" });
+						this.stopLoading();
+						return
+					}
+
+					if(userPermittedRoles.includes("sub_enterprise")) {
+						this.$router.replace({ name: "esgAccountDashboard" });
+						this.stopLoading();
+						return
+					}
+
+					if(userPermittedRoles.includes("operator")) {
+						this.$router.replace({ name: "dueDiligenceDashboard" });
+						this.stopLoading();
+						return
+					}
+
+					if(userPermittedRoles.includes("supplier")) {
+						this.$router.replace({ name: "dueDiligenceDashboard" });
+						this.stopLoading();
+						return
+					}
+
+					if(userPermittedRoles.some(role => ALL_PTSI_ROLES.includes(role))) {
+						this.$router.replace({ name: "dashboard" });
+						this.stopLoading();
+						return
+					}	
+					
+					if(userPermittedRoleType.includes("manager") || userPermittedRoleType.includes("support_admin")) {
+						this.$router.replace({ name: "Tickets" });
+						this.stopLoading();
+						return
+					}
+
+					this.$router.replace({ name: "DashboardReports" });
+					this.stopLoading();
+				} else {
+					// Verification failed
+					this.otpError = response.message || 'Invalid verification code';
+					
+					// Check if account is locked
+					if (response.message && response.message.includes('locked')) {
+						this.$notify({
+							title: 'Account Locked',
+							text: response.message,
+							type: 'error'
+						});
+					}
+					
+					// Clear OTP input
+					this.otpForm.otp = '';
+					this.stopLoading();
+				}
+			} catch (error) {
+				console.error('MFA verification error:', error);
+				this.otpError = error.message || 'Verification failed';
+				this.otpForm.otp = '';
+				this.$notify({
+					title: 'Verification Failed',
+					text: error.message || 'An error occurred during verification',
+					type: 'error'
+				});
+				this.stopLoading();
+			}
+		},
+		// Resend OTP
+		async resendOtp() {
+			try {
+				// Start cooldown
+				this.resendCooldown = 60; // 60 seconds cooldown
+				const interval = setInterval(() => {
+					this.resendCooldown--;
+					if (this.resendCooldown <= 0) {
+						clearInterval(interval);
+					}
+				}, 1000);
+				
+				// Make login request again to generate new OTP
+				const authData = {
+					credential: this.username,
+					password: this.password,
+					captcha: this.captchaCode
+				};
+				
+				const response = await this.$store.dispatch('checkAuth', authData);
+				const data = response?.data || response;
+				
+				if (data?.mfa_required) {
+					this.mfaData = data;
+					this.$notify({
+						title: 'Success',
+						text: 'New verification code sent!',
+						type: 'success'
+					});
+				}
+			} catch (error) {
+				console.error('Resend OTP error:', error);
+				this.$notify({
+					title: 'Error',
+					text: 'Failed to resend code. Please try again.',
+					type: 'error'
+				});
+			}
+		},
+		// Cancel MFA and go back to login
+		cancelMfa() {
+			this.mfaRequired = false;
+			this.mfaData = null;
+			this.otpForm.otp = '';
+			this.otpForm.user_id = null;
+			this.otpError = '';
+			this.password = ''; // Clear password
+		},
 		emptyErrors(){
 			this.error = false;
 			this.errors.username = '';
@@ -374,6 +643,20 @@ input.form-control:focus-visible {
 .login-from .emailgroup .form-control::placeholder{
 	font-size: 13px;
 	font-family: pop_semiBold;
+}
+
+/* MFA Styles */
+.mfa-header h2 {
+	font-size: 24px;
+	font-family: pop_semiBold;
+	font-weight: 600;
+}
+
+.otp-input input {
+	text-align: center;
+	font-size: 24px;
+	letter-spacing: 8px;
+	font-weight: 600;
 }
 
 </style>
