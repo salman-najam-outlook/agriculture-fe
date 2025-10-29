@@ -17,7 +17,7 @@
 
           <v-menu bottom origin="center center" transition="scale-transition">
             <template v-slot:activator="{ on, attrs }">
-              <v-btn color="grey" v-bind="attrs" v-on="on" dark small class="mr-3" @click="setActiveButton('dimitra')" :class="{'active-btn': activeButton ==='dimitra'}">
+              <v-btn color="grey" v-bind="{...attrs, ...getButtonProps()}" v-on="on" dark small class="mr-3" @click="setActiveButton('dimitra')" :class="{'active-btn': activeButton ==='dimitra'}">
                 {{ $t("dueDiligence.dimitraApps") }}
                 <v-icon>mdi-chevron-down</v-icon>
               </v-btn>
@@ -39,7 +39,7 @@
 
           <v-menu bottom origin="center center" transition="scale-transition">
             <template v-slot:activator="{ on, attrs }">
-              <v-btn color="grey" v-bind="attrs" v-on="on" dark small class="mr-3" @click="setActiveButton('addNew')" :class="{'active-btn': activeButton ==='addNew'}">
+              <v-btn color="grey" v-bind="{...attrs, ...getButtonProps()}" v-on="on" dark small class="mr-3" @click="setActiveButton('addNew')" :class="{'active-btn': activeButton ==='addNew'}">
                 {{ $t("dueDiligence.addNew") }}
                 <v-icon>mdi-chevron-down</v-icon>
               </v-btn>
@@ -58,7 +58,7 @@
             </v-list>
           </v-menu>
 
-          <v-btn color="grey" dark small class="mr-3" type="button" @click="setActiveButton('existing')" :class="{'active-btn': activeButton ==='existing'}">
+          <v-btn color="grey" dark small class="mr-3" type="button" @click="setActiveButton('existing')" :class="{'active-btn': activeButton ==='existing'}" v-bind="getButtonProps()">
             {{ $t("dueDiligence.existingData") }}
           </v-btn>
         </div>
@@ -86,7 +86,7 @@
             </v-tooltip>
           </h3>
           <v-spacer></v-spacer>
-          <v-icon @click="removeProductionPlace" v-if="addProductionPlaces.length > 0" class="icon-with-background" style="color:red">
+          <v-icon @click="removeProductionPlace" v-if="addProductionPlaces.length > 0" class="icon-with-background" style="color:red" v-bind="getButtonProps()">
             mdi-close-circle
           </v-icon>
         </div>
@@ -100,7 +100,7 @@
                   <v-row>
                     <v-col cols="12" v-if="index>0">
                       <label>
-                        <v-btn elevation="0" class="mt-5" fab color="red" x-small @click="handleRemoveAddedProductionPlace(index)">
+                        <v-btn elevation="0" class="mt-5" fab color="red" x-small @click="handleRemoveAddedProductionPlace(index)" v-bind="getButtonProps()">
                           <v-icon style="color:#fff;">
                           mdi-minus
                           </v-icon>
@@ -120,7 +120,7 @@
               <span>{{ $t("dueDiligence.producerNameTT") }}</span>
             </v-tooltip>
                       <v-text-field class="custom-input" :placeholder="$t('dueDiligence.producerName')"
-                        v-model="addProductionPlaces[index].producerName" outlined dense :rules="[rules.required]"></v-text-field>
+                        v-model="addProductionPlaces[index].producerName" dense :rules="[rules.required]" v-bind="getTextFieldProps()"></v-text-field>
                     </v-col>
                     <v-col cols="3">
                       <label for="text">
@@ -134,8 +134,8 @@
                       </template>
                       <span>{{ $t("dueDiligence.producerCountryTT") }}</span>
                     </v-tooltip>
-                        <v-autocomplete :items="countries" v-model="addProductionPlaces[index].producerCountry" item-text="name" item-value="name" dense outlined clearable
-                        class="wdt" :placeholder="$t('deforestation.allCountries')" :rules="[rules.required]"></v-autocomplete>
+                        <v-autocomplete :items="countries" v-model="addProductionPlaces[index].producerCountry" item-text="name" item-value="name" dense clearable
+                        class="wdt" :placeholder="$t('deforestation.allCountries')" :rules="[rules.required]" v-bind="getSelectProps()"></v-autocomplete>
                     </v-col>
                     <v-col cols="3">
                       <label for="text">
@@ -146,7 +146,7 @@
                     </v-col>
 
                   <v-col cols="3">
-                    <v-btn elevation="0" class="mt-5" fab color="primary" small  @click="handleAddInput(index)">
+                    <v-btn elevation="0" class="mt-5" fab color="primary" small  @click="handleAddInput(index)" v-bind="getButtonProps()">
                       <v-icon>
                       mdi-plus
                     </v-icon>
@@ -163,19 +163,19 @@
 
                           <td> {{ subIndex + 1 }}</td>
                           <td> <v-text-field class="mt-3" :placeholder="$t('farmName')"
-                              v-model="addProductionPlaces[index].farms[subIndex].farmName" outlined
-                              dense :rules="[rules.required]"></v-text-field>
+                              v-model="addProductionPlaces[index].farms[subIndex].farmName"
+                              dense :rules="[rules.required]" v-bind="getTextFieldProps()"></v-text-field>
                           </td>
                           <td> <v-text-field class="mt-3" :placeholder="$t('area')"
-                              v-model="addProductionPlaces[index].farms[subIndex].area" @input="updateTotalArea(index)" outlined
-                              dense :disabled="true"  :rules="[rules.required]"></v-text-field>
+                              v-model="addProductionPlaces[index].farms[subIndex].area" @input="updateTotalArea(index)"
+                              dense :disabled="true"  :rules="[rules.required]" v-bind="getTextFieldProps()"></v-text-field>
                           </td>
                           <td> <v-select class="mt-3" :items="farmGeofenceType" dense
-                              v-model="addProductionPlaces[index].farms[subIndex].farmType" outlined item-text="label" item-value="value"
-                              :placeholder="$t('dueDiligence.selectType')" :rules="[rules.required]"/></td>
+                              v-model="addProductionPlaces[index].farms[subIndex].farmType" item-text="label" item-value="value"
+                              :placeholder="$t('dueDiligence.selectType')" :rules="[rules.required]" v-bind="getSelectProps()"/></td>
                           <td>
                             <div class="d-flex" style="margin-top: -10px;cursor: pointer;">
-                              <v-icon color="red" @click="handleRemoveInput(index,subIndex)">mdi-close-circle-outline</v-icon>
+                              <v-icon color="red" @click="handleRemoveInput(index,subIndex)" v-bind="getButtonProps()">mdi-close-circle-outline</v-icon>
                               <img class="ml-2" src="/icons/marker-inside-circle.png"  @click="showGeofence(index,subIndex)"
                                 style="width: 24px; height: 24px; border-radius: 50%;" />
                             </div>
@@ -189,7 +189,7 @@
             </v-form>
           </v-col>
           <v-col cols="12">
-            <v-btn color="primary" dark medium class="mr-3" @click="handleAddProductionPlace">
+            <v-btn color="primary" dark medium class="mr-3" @click="handleAddProductionPlace" v-bind="getButtonProps()">
               {{ $t("dueDiligence.addProductionPlace") }}
             </v-btn>
           </v-col>
@@ -250,16 +250,16 @@
               </label>
               <label> ha </label>
             </div>
-            <v-text-field dense required :disabled="!editDefaultArea" outlined v-model="pointFarmDefaultArea" :background-color="areaFieldColor" :rules="[rules.range]" ></v-text-field>
+            <v-text-field dense required :disabled="!editDefaultArea" v-model="pointFarmDefaultArea" :background-color="areaFieldColor" :rules="[rules.range]" v-bind="getTextFieldProps()"></v-text-field>
           </v-col>
           <v-col cols="6">
-            <v-btn color="primary" class="px-2" @click="editArea" v-if="!editDefaultArea">
+            <v-btn color="primary" class="px-2" @click="editArea" v-if="!editDefaultArea" v-bind="getButtonProps()">
               {{ $t('edit') }}
             </v-btn>
-            <v-btn color="primary" outlined class="px-2 ml-2" @click="cancelAreaEdit" v-if="editDefaultArea">
+            <v-btn color="primary" outlined class="px-2 ml-2" @click="cancelAreaEdit" v-if="editDefaultArea" v-bind="getButtonProps()">
              {{ $t("cancel")}}
             </v-btn>
-            <v-btn color="primary" @click="saveArea()" class="ml-2" v-if="editDefaultArea" :disabled="!isAreaValid">
+            <v-btn color="primary" @click="saveArea()" class="ml-2" v-if="editDefaultArea" :disabled="!isAreaValid" v-bind="getButtonProps()">
               {{ $t("save")}}
             </v-btn>
           </v-col>
@@ -279,7 +279,7 @@
               <v-card-text class="black--text">
                 <v-menu bottom origin="center center" transition="scale-transition">
                   <template v-slot:activator="{ on, attrs }">
-                    <v-btn color="primary" v-bind="attrs" v-on="on" dark class="mr-3">
+                    <v-btn color="primary" v-bind="{...attrs, ...getButtonProps()}" v-on="on" dark class="mr-3">
                       <v-icon small class="mr-2">mdi-tray-arrow-down</v-icon>
                       {{ $t("memberDataSection.download") }}
                       <v-icon>mdi-chevron-down</v-icon>
@@ -428,8 +428,8 @@
                     <span>{{ $t('dueDiligence.internalReferenceNumberTT') }}</span>
                   </v-tooltip>
                 </label>
-                <v-text-field prepend-inner-icon="mdi-magnify" outlined height="5px" :placeholder="$t('search')" dense
-                  v-model="productionPlaceInput.internalRefNum" @input="debouncedGetProductionPlaces" class="shrink" clearable></v-text-field>
+                <v-text-field prepend-inner-icon="mdi-magnify" height="5px" :placeholder="$t('search')" dense
+                  v-model="productionPlaceInput.internalRefNum" @input="debouncedGetProductionPlaces" class="shrink" clearable v-bind="getTextFieldProps()"></v-text-field>
               </div>
               <div class="ml-3" style="width: 200px;">
                 <label for="text">{{ $t('country') }}</label>
@@ -441,8 +441,8 @@
                     </template>
                     <span>{{ $t('country') }}</span>
                   </v-tooltip>
-                <v-autocomplete :items="filterCountries" v-model="productionPlaceInput.farmCountry" item-text="name" item-value="name" dense outlined clearable
-                  class="wdt" :placeholder="$t('select')" @change="debouncedGetProductionPlaces" multiple></v-autocomplete>
+                <v-autocomplete :items="filterCountries" v-model="productionPlaceInput.farmCountry" item-text="name" item-value="name" dense clearable
+                  class="wdt" :placeholder="$t('select')" @change="debouncedGetProductionPlaces" multiple v-bind="getSelectProps()"></v-autocomplete>
               </div>
 
               <div class="ml-3" style="width: 200px;">
@@ -455,10 +455,10 @@
                     </template>
                     <span>{{ $t('dueDiligence.supplierTT') }}</span>
                   </v-tooltip>
-                <v-autocomplete :items="supplierList" v-model="productionPlaceInput.supplierId" item-text="label" item-value="val" dense outlined 
+                <v-autocomplete :items="supplierList" v-model="productionPlaceInput.supplierId" item-text="label" item-value="val" dense 
                 :clearable="!isSupplierOwner"
                 :disabled="isSupplierOwner"
-                  class="wdt" :placeholder="$t('select')" @change="debouncedGetProductionPlaces"></v-autocomplete>
+                  class="wdt" :placeholder="$t('select')" @change="debouncedGetProductionPlaces" v-bind="getSelectProps()"></v-autocomplete>
               </div>
 
               <div class="ml-3" style="width: 290px;">
@@ -471,8 +471,8 @@
                     </template>
                     <span>{{ $t('deforestation.EUDRDeforestationStatusTT') }}</span>
                   </v-tooltip>
-                <v-autocomplete :items="EUDRstatusList" v-model="productionPlaceInput.eudrDeforestationStatus" item-text="text" item-value="val" dense outlined clearable
-                  class="wdt" :placeholder="$t('select')" @change="debouncedGetProductionPlaces"></v-autocomplete>
+                <v-autocomplete :items="EUDRstatusList" v-model="productionPlaceInput.eudrDeforestationStatus" item-text="text" item-value="val" dense clearable
+                  class="wdt" :placeholder="$t('select')" @change="debouncedGetProductionPlaces" v-bind="getSelectProps()"></v-autocomplete>
               </div>
 
               <v-spacer></v-spacer>
@@ -481,13 +481,13 @@
                   {{ from }} - {{ to }} of {{ totalProductionPlaces }}
                 </div>
                 <v-btn class="mx-2" fab small outlined color="primary" :disabled="tableOptions.page <= 1"
-                  @click="pageChange(false)">
+                  @click="pageChange(false)" v-bind="getButtonProps()">
                   <v-icon dark>
                     mdi-chevron-left
                   </v-icon>
                 </v-btn>
                 <v-btn class="mx-2" fab small outlined color="primary" :disabled="tableOptions.page >= totalPages"
-                  @click="pageChange(true)">
+                  @click="pageChange(true)" v-bind="getButtonProps()">
                   <v-icon dark>
                     mdi-chevron-right
                   </v-icon>
@@ -502,7 +502,7 @@
                 <td>
                   <v-checkbox multiple :key="item.id"
                   :disabled="reportFarmIds.includes(item.farmId)"
-                  v-model="selected" :value="item" style="margin:0px;padding:0px" hide-details @change="handleCheckboxChange"/>
+                  v-model="selected" :value="item" style="margin:0px;padding:0px" hide-details @change="handleCheckboxChange" v-bind="getCheckboxProps()"/>
                 </td>
                 <td>
                   {{ item.farm.farmName || '' }}<br>
@@ -541,7 +541,7 @@
                     <v-spacer></v-spacer>
                     <v-tooltip top color="00BD73" max-width="350">
                         <template v-slot:activator="{ on, attrs }">
-                          <v-icon v-bind="attrs" v-on="on" class="ml-1 primary--text" @click="comfirmItemDelete(item)">mdi-trash-can</v-icon>
+                          <v-icon v-bind="{...attrs, ...getButtonProps()}" v-on="on" class="ml-1 primary--text" @click="comfirmItemDelete(item)">mdi-trash-can</v-icon>
                         </template>
                         <span>{{ $t('delete') }}</span>
                       </v-tooltip>
@@ -1519,8 +1519,8 @@ export default {
               }));
             } else if (farm.circularGeofence) {
               transformedFarm.pointCoordinates = {
-                centerLatitude: farm.circularGeofence.geofenceCenterLat.toString(),
-                centerLongitude: farm.circularGeofence.geofenceCenterLog.toString(),
+                centerLatitude: (farm.circularGeofence.geofenceCenterLat || farm.lat).toString(),
+                centerLongitude: (farm.circularGeofence.geofenceCenterLog || farm.log).toString(),
                 radius: farm.circularGeofence.geofenceRadius.toString(),
               };
             } else if(farm.lat && farm.log && !farm.circularGeofence && !farm.farmCoordinates.length) {
@@ -1744,8 +1744,8 @@ export default {
               }));
             } else if (farm.circularGeofence) {
               transformedFarm.pointCoordinates = {
-                centerLatitude: farm.circularGeofence.geofenceCenterLat.toString(),
-                centerLongitude: farm.circularGeofence.geofenceCenterLog.toString(),
+                centerLatitude: (farm.circularGeofence.geofenceCenterLat || farm.lat).toString(),
+                centerLongitude: (farm.circularGeofence.geofenceCenterLog || farm.log).toString(),
                 radius: farm.circularGeofence.geofenceRadius.toString(),
               };
             }
@@ -1845,8 +1845,8 @@ export default {
               }));
             } else if (farm.circularGeofence) {
               transformedFarm.pointCoordinates = {
-                centerLatitude: farm.circularGeofence.geofenceCenterLat.toString(),
-                centerLongitude: farm.circularGeofence.geofenceCenterLog.toString(),
+                centerLatitude: (farm.circularGeofence.geofenceCenterLat || farm.lat).toString(),
+                centerLongitude: (farm.circularGeofence.geofenceCenterLog || farm.log).toString(),
                 radius: farm.circularGeofence.geofenceRadius.toString(),
               };
             }

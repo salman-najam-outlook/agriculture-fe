@@ -19,15 +19,19 @@
                     </v-btn>
                 </div>
                 <!-- for step 3 -->
-                <div v-else-if="step === 3" class="d-flex align-center">
-                    <v-btn color="primary" dark class="mr-2 mb-2" @click="showSaveConfirmation = true">
-                        {{ $t('Save') }}
+                <div v-else-if="step === 3"  class="d-flex align-center">
+                    <!-- back  -->
+                    <v-btn color="primary" dark class="mr-2 mb-2" @click="step = 2">
+                        {{ $t('Back') }}
                     </v-btn>
                     <v-btn color="primary" dark class="mr-2 mb-2" @click="showPublishConfirmation = true">
                         {{ $t('Publish To Dimitra') }}
                     </v-btn>
                     <v-btn color="primary" dark class="mr-2 mb-2" @click="showDialog = true">
                         {{ $t('Publish To Blockchain') }}
+                    </v-btn>
+                    <v-btn color="primary" dark class="mr-2 mb-2" @click="showSaveConfirmation = true">
+                        {{ $t('Save') }}
                     </v-btn>
                 </div>
             </div>
@@ -85,7 +89,7 @@
                                     @update:selected-template="selectedTemplate = $event"></template-selection>
                             </v-card-text>
                             <v-card-actions>
-                                <v-btn color="primary" @click="handleCreateEsg()">Nexttt</v-btn>
+                                <v-btn color="primary" @click="handleCreateEsg()">Next</v-btn>
                             </v-card-actions>
                         </v-card>
                     </div>
@@ -94,6 +98,16 @@
                     <div v-else-if="step === 2">
                         <v-card flat>
                             <v-card-text>
+                                <label for="templateName">Template Name</label>
+                                <div class="my-4">
+                                    <v-text-field 
+                                        outlined
+                                        :placeholder="$t('Name of Template')"
+                                        dense 
+                                        class="shrink" 
+                                        v-model="templateName"
+                                    ></v-text-field>
+                                </div>
                                 <div>
                                     <SectionItem v-for="(section, idx) in sections" :key="idx" :section="section"
                                         :index="idx" @delete-section="deleteSection" />
@@ -186,16 +200,17 @@
 
         <TemplateSettingsDialog v-model="showTemplateSettings" :settings="templateSettings"
             @save="templateSettings = $event" />
+        <ConfirmationDialog :visible="showSaveConfirmation" title="Confirmation"
+            message="Are you sure you want to save your changes?" confirm-text="CONFIRM" cancel-text="CANCEL"
+            type="warning" @cancel="showSaveConfirmation = false" @close="showSaveConfirmation = false"
+            @confirm="handleSaveChanges" />
+
         <PublishingBlockchainDialog :visible="showDialog" :initialProgress="50" @close="showDialog = false"
             @complete="onPublishComplete" />
         <ConfirmationDialog :visible="showPublishConfirmation" title="Confirmation"
             message="Are you sure you want to publish this report? Once published, the ESG report will be available to the public on Dimitra. No further changes can be made to this report after publishing."
             confirm-text="CONFIRM" cancel-text="CANCEL" type="warning" @confirm="handlePublishReport"
             @cancel="showPublishConfirmation = false" @close="showPublishConfirmation = false" />
-        <ConfirmationDialog :visible="showSaveConfirmation" title="Confirmation"
-            message="Are you sure you want to save your changes?" confirm-text="CONFIRM" cancel-text="CANCEL"
-            type="warning" @cancel="showSaveConfirmation = false" @close="showSaveConfirmation = false" />
-        <!-- @confirm="handleSaveChanges" -->
 
         <!-- Add this snackbar component before closing </v-app> -->
         <v-snackbar
@@ -267,9 +282,13 @@ export default {
     },
     created() {
         this.reportId = this.$route.query.reportId;
+        // If arriving with a templateId in the query (e.g., after creation), persist it for steps 2 and 3
+        if (this.$route.query.templateId) {
+            this.currentTemplateId = this.$route.query.templateId;
+        }
         if (this.reportId) {
             this.step = 3; // Redirect to step 3
-            this.loadDummyReportdata(); // Load report details if needed
+            this.loadReportData();// Loading report data
             this.preview = true; // Set preview mode
         }
     },
@@ -277,21 +296,15 @@ export default {
         return {
             step: 1,
             reportId: 0,
-            selectedProtocol: 'Abranfrutas Protocol / Fruit Growers',
+            selectedProtocol: null,
             selectedProtocolId: null,
             reportType: 'Internal Report',
             timeline: ['2024', '2025'], // Changed from string to array for multi-select
             subOrganizations: [],
-            templates: [
-                { id: 1, name: 'Template 1', features: ['About the Report', 'About the Organization', 'ESG Progress', 'ESG Score Card'] },
-                { id: 2, name: 'Template 2', features: ['Overview', 'ESG Score Card'] },
-                { id: 3, name: 'Template 3', features: ['About the Report', 'About the Organization', 'ESG Progress', 'ESG Score Card'] },
-                { id: 4, name: 'Template 4', features: ['About the Report', 'About the Organization', 'ESG Progress', 'ESG Score Card'] },
-                { id: 5, name: 'Template 5', features: ['About the Report', 'About the Organization', 'ESG Progress', 'ESG Score Card'] },
-            ],
+            templates: [],
             breadcrumbs: [
-                { text: 'ESG Platform', to: '/esg-platform' },
-                { text: 'Report Builder', to: '/esg-platform/report-builder' },
+                { text: 'ESG Platform', to: '/esg-platform/esg-dashboard' },
+                { text: 'Report Builder', to: '/esg-platform/esg-reports-builder' },
                 { text: 'Create Report', active: true },
             ],
             selectedTemplate: null,
@@ -324,9 +337,62 @@ export default {
                 text: '',
                 color: 'success'
             },
+            // Persist the template id selected/used for the created report so steps 2 and 3 can edit/update it
+            currentTemplateId: null,
+            // Holds fetched template details for step 2 editing context
+            templateInfo: null,
         };
     },
     methods: {
+        async handleSaveChanges() {
+            this.startLoading();
+            
+            try {
+                // Validate required fields
+                if (!this.templateName?.trim() || this.sections.length === 0) {
+                    this.$notify({
+                        type: "error",
+                        text: "Template name and sections are required to save",
+                    });
+                    this.showSaveConfirmation = false;
+                    return;
+                }
+
+                const templatePayload = {
+                    templateName: this.templateName.trim(),
+                    templateSettings: this.templateSettings,
+                    sections: this.sections
+                };
+
+                const response = await EsgService.updateEsgReportTemplate(this.currentTemplateId, templatePayload);
+                
+                if (!response.success) {
+                    this.$notify({
+                        type: "error",
+                        text: response.message || "Failed to save template. Please try again.",
+                    });
+                    this.showSaveConfirmation = false;
+                    return;
+                }
+
+                this.$notify({
+                    type: "success",
+                    text: "Template saved successfully!",
+                });
+                this.showSaveConfirmation = false;
+                this.$router.push({ name: 'esgReportsBuilder' });
+                
+            } catch (error) {
+                console.error('Failed to save template:', error);
+                this.$notify({
+                    type: "error",
+                    text: "An unexpected error occurred. Please try again.",
+                });
+                this.showSaveConfirmation = false;
+            } finally {
+                this.stopLoading();
+            }
+        },
         close() {
             this.$router.push('/');
         },
@@ -377,153 +443,14 @@ export default {
         handleProtocolSelection(protocolId) {
             this.selectedProtocolId = protocolId;
         },
-        loadDummyReportdata() {
-            this.sectionsGetByIndex = [
-                {
-                    settings: {
-                        backgroundColor: '#ffffff',
-                        fontColor: '#000000',
-                        font: 'Poppins',
-                        timeline: '2024 - 2026',
-                        locked: false
-                    },
-                    blocks: [
-                        {
-                            type: 'heading',
-                            text: 'About Dimitra ESG Report, Latest Technology and Innovation',
-                            size: 'H1',
-                        },
-                        {
-                            type: 'paragraph',
-                            content: 'This is a sample paragraph for the About the Report section. lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-                        },
-                        {
-                            type: 'image',
-                            images: ['/img/esgscorecard.png'],
-                            imageType: 'single'
-                        },
-                        {
-                            type: 'table',
-                            headers: ['Header 1', 'Header 2', 'Header 3'],
-                            rows: [
-                                ['Row 1 Col 1', 'Row 1 Col 2', 'Row 1 Col 3'],
-                                ['Row 2 Col 1', 'Row 2 Col 2', 'Row 2 Col 3']
-                            ],
-                            settings: {
-                                backgroundColor: '#cfcf',
-                                fontColor: '#000000',
-                                font: 'Poppins'
-                            }
-                        },
-                        {
-                            type: 'paragraph',
-                            content: 'This is a sample paragraph for the About the Organization section.'
-                        },
-                        {
-                            type: 'stakeholders',
-                            stakeholders: [
-                                { name: 'John Doe', message: 'Lorem ipsum dolor sit amet.', image: '/img/stakeholder1.png' },
-                                { name: 'Jane Smith', message: 'Consectetur adipiscing elit.', image: '/img/stakeholder2.png' },
-                                { name: 'Alice Johnson', message: 'Sed do eiusmod tempor incididunt.', image: '/img/stakeholder3.png' }
-                            ],
-                            settings: {
-                                backgroundColor: '#ffffff',
-                                fontColor: '#000000',
-                                font: 'Poppins'
-                            }
-                        },
-                        {
-                            type: 'esgProgressLineChart',
-                            chartData: {
-                                labels: ['2024', '2025', '2026'],
-                                datasets: [
-                                    {
-                                        label: 'Environmental',
-                                        data: [75, 80, 85],
-                                        borderColor: '#4CAF50',
-                                        backgroundColor: 'rgba(76, 175, 80, 0.2)',
-                                    },
-                                    {
-                                        label: 'Social',
-                                        data: [60, 65, 70],
-                                        borderColor: '#2196F3',
-                                        backgroundColor: 'rgba(33, 150, 243, 0.2)',
-                                    },
-                                    {
-                                        label: 'Governance',
-                                        data: [80, 85, 90],
-                                        borderColor: '#FF9800',
-                                        backgroundColor: 'rgba(255, 152, 0, 0.2)',
-                                    }
-                                ]
-                            },
-                            settings: {
-                                backgroundColor: '#ffffff',
-                                fontColor: '#000000',
-                                font: 'Poppins'
-                            }
-                        },
-                        {
-                            type: 'esgScorecard',
-                            scorecardData: [
-                                { name: 'Environmental', score: 75 },
-                                { name: 'Social', score: 60 },
-                                { name: 'Governance', score: 80 }
-                            ],
-                            settings: {
-                                backgroundColor: '#ffffff',
-                                fontColor: '#000000',
-                                font: 'Poppins'
-                            }
-                        }, {
-                            type: 'image',
-                            images: ['/img/esgscorecard.png', '/img/esgscorecard.png', '/img/esgscorecard.png', '/img/esgscorecard.png', '/img/esgscorecard.png', '/img/esgscorecard.png', '/img/esgscorecard.png', '/img/esgscorecard.png', '/img/esgscorecard.png', '/img/esgscorecard.png', '/img/esgscorecard.png', '/img/esgscorecard.png'],
-                            imageType: 'grid',
-                            grid: [5, 3]
-
-                        }
-                    ]
-                },
-                {
-                    title: 'ESG Progress',
-                    headingSize: 'H1',
-                    settings: {
-                        backgroundColor: '#ffffff',
-                        fontColor: '#000000',
-                        font: 'Poppins',
-                        timeline: '2024 - 2026',
-                        locked: false
-                    },
-                    blocks: []
-                },
-                {
-                    title: 'ESG Progress',
-                    headingSize: 'H1',
-                    settings: {
-                        backgroundColor: '#ffffff',
-                        fontColor: '#000000',
-                        font: 'Poppins',
-                        timeline: '2024 - 2026',
-                        locked: false
-                    },
-                    blocks: []
-                },
-                {
-                    title: 'ESG Score Card',
-                    headingSize: 'H1',
-                    settings: {
-                        backgroundColor: '#ffffff',
-                        fontColor: '#000000',
-                        font: 'Poppins',
-                        timeline: '2024 - 2026',
-                        locked: false
-                    },
-                    blocks: []
-                }
-            ];
+        loadReportData() {
+            // Loading data
         },
         handleStepChange(newStep) {
             this.step = newStep;
+            if (newStep === 2) {
+                this.loadTemplateInfo();
+            }
         },
         showSuccess(message) {
             this.snackbar = {
@@ -558,6 +485,12 @@ export default {
                     this.showError('Please select at least one timeline year');
                     return;
                 }
+                
+                // template id should be 
+                if (!this.selectedTemplate) {
+                    this.showError('Please select a template');
+                    return;
+                }
 
                 // Generate a unique report ID
                 const reportId = `ESG-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -571,7 +504,7 @@ export default {
                     esgProtocolId: this.selectedProtocolId,
                     reportTimeline:  JSON.parse(JSON.stringify(this.timeline)), // Clean the reactive array
                     subOrganizationIds: this.subOrganizations,
-                    templateId: '686e2f8594e5f5ba76cc2de0',
+                    templateId: this.selectedTemplate,
                     organizationId: organizationId,
                 };
 
@@ -581,8 +514,16 @@ export default {
                 console.log('ESG Report Creation Response:', response);
 
                 if (response?.success === true) {
+                    // Preserve selected template id for subsequent steps before resetting form-specific state
+                    const createdTemplateId = this.selectedTemplate;
                     this.resetPayloadData();
-                    this.step = 2; // Move to next step
+                    this.currentTemplateId = createdTemplateId;
+                    this.$router.replace({
+                        query: { ...this.$route.query, templateId: createdTemplateId }
+                    });
+                    // Load existing template info to prefill step 2 with its sections/settings
+                    await this.loadTemplateInfo();
+                    this.step = 2;
                     this.showSuccess('ESG Report created successfully!');
                     this.stopLoading();
                 } else {
@@ -607,6 +548,31 @@ export default {
             this.templates = [];
             this.selectedTemplate = null;
             this.sections = [];
+        },
+        async loadTemplateInfo() {
+            try {
+                const templateId = this.currentTemplateId || this.$route.query.templateId;
+                if (!templateId) return;
+                this.startLoading();
+
+                if (templateId) {
+                    const response = await EsgService.getEsgReportTemplateById(templateId);
+
+                    if (!response.success) {
+                        this.$router.back();
+                        return;
+                    }
+
+                    this.templateName = response.data.templateName;
+                    this.templateSettings = response.data.templateSettings;
+                    this.sections = response.data.sections;
+                    this.templateInfo = response.data;
+                }
+                this.stopLoading();
+            } catch (e) {
+                console.error('Failed to load template info:', e);
+                this.stopLoading();
+            }
         },
     },
       mixins: [ LoadingMixin ],

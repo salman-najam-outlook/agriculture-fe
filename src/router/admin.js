@@ -909,6 +909,11 @@ export default [
             component: () => import("../views/dashboard-reports/Dashboard.vue"),
           },
           {
+            path: "/dashboard",
+            name: "dashboard",
+            component: () => import("../views/dashboard/Dashboard.vue"),
+          },
+          {
             path: ":type/detail",
             name: "ReportDetail",
             component: () =>
@@ -1118,6 +1123,14 @@ export default [
             component: () =>
               import(
                 "../views/esg-platform/report-builder/manage-template/index.vue"
+              ),
+          },
+          {
+            path: "create-new-esg-template",
+            name: "createNewEsgTemplate",
+            component: () =>
+              import(
+                "../views/esg-platform/report-builder/create-template/index.vue"
               ),
           },
           {
@@ -1378,7 +1391,7 @@ export default [
         children: [
           {
             path: 'home',
-            name: 'dashboard',
+            name: 'dds_root_dashboard',
             component: () => import('../views/deforestation/dds/approval-flow/Dashboard/index.vue'),
           },
           {

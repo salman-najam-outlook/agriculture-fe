@@ -442,7 +442,7 @@
                                 </template>
                                 <v-list>
                                   
-                                  <v-list-item :disabled="checkDisableReport(item)" @click="navigateReportView(item)">
+                                  <v-list-item @click="navigateReportView(item)">
                                     <v-list-item-title>{{ $t('dueDiligence.viewReport') }}</v-list-item-title>
                                   </v-list-item>
                                     <v-list-item :disabled="!['Compliant', 'Non-Compliant', 'Processing  Farms'].includes(item.status)" @click="redirectToDDSSUmmary(item.id)">
@@ -462,12 +462,13 @@
 
                 <template v-slot:footer></template>
               </v-data-table>
-             
+                
+            <!-- Status Legend for Shipment Creation -->
+            <template>
+              <StatusLegends :isDdsExporter="isDdsExporter" />
+            </template>
             </v-col>
           </v-row>
-          <template v-if="isIndonesianClient || isDdsExporter || isSupplierOwner">
-            <StatusLegends :isDdsExporter="isDdsExporter" />
-          </template>
         </v-card-text>
       </v-card>
 
@@ -776,8 +777,6 @@ export default {
       if (!isOperatorOnly && (!checkDisabledStatus(status) || hasAdditionalRequest)) {
         return false;
       }
-      
-      return true;
     },
     checkDisabledStatus(status) {
       return ['Compliant', 'Non-Compliant'].includes(status);

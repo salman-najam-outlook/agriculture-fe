@@ -83,7 +83,7 @@
                       width: 120px;
                       height: 120px;
                     ">
-                        <v-icon @click="removeFile(key)" class="delete-icon" style="
+                        <v-icon @click="removeFile(doc, key, question)" class="delete-icon" style="
                         position: absolute;
                         top: 4px;
                         right: 4px;
@@ -137,6 +137,7 @@
 
 <script>
 import DeforestationService from "@/_services/DeforestationService";
+import DeforestationSurveyBuilderService from "@/_services/DeforestationSurveyBuilderService";
 import loadingMixin from "@/mixins/LoadingMixin";
 
 export default {
@@ -171,6 +172,9 @@ export default {
     paginatedQuestions() {
       return this.surveyee[this.currentPage - 1].assessmentQuestions;
     },
+    allResponses () {
+      return this.surveyResponses;
+    }
   },
   methods: {
     async openFile(url) {
@@ -263,6 +267,7 @@ export default {
 
     getAnsByComponentType(question) {
       const response = this.findAnswer(question.id);
+      console.log("getAnsByComponentType", question, response)
 
       switch (question.assessmentQuestionType) {
         case "RADIO_BUTTON":
@@ -295,6 +300,7 @@ export default {
             : "";
         case "FILE_ATTACHMENT":
           return response.fileAndDigitalSignatureFieldAnswer?.map((item) => ({
+            response_id: response.response_id,
             ...item,
             extension: item?.s3Result?.s3key ? item.s3Result.s3key.split(".").pop() : item?.s3key ? item.s3key.split(".").pop() : "",
             name: item?.s3Result?.s3key ? item.s3Result.s3key.split("risk-assessment-docs/").pop() : item?.s3key ? item.s3key.split("risk-assessment-docs/").pop() : ""
@@ -306,15 +312,25 @@ export default {
       }
     },
     findResponse(questionId) {
-      const response = this.surveyResponses.find(
+      const response = this.allResponses.find(
         (response) => response.questionId === questionId
       );
+     
       return response;
 
     },
     findAnswer(questionId) {
       const response = this.findResponse(questionId);
-      return response ? response.response : {};
+       console.log("findAnswer", response)
+       let tmpObj = response?.response ?  JSON.parse(JSON.stringify(response?.response)) : null
+
+       if(tmpObj) {
+        tmpObj.response_id = response.id;
+       } else {
+        tmpObj = {}
+       }
+        console.log("findAnswer tmpObj", tmpObj)
+      return tmpObj
     },
 
     getDigitalSignature(questionId) {
@@ -366,22 +382,61 @@ export default {
       return "";
     },
 
-    removeFile(key) {
-      this.documents.splice(key, 1);
-      this.s3FileUploadResult = this.s3FileUploadResult.filter(
-        (s) => s.s3key !== key
-      );
-      const questionResponse = {
-        questionId: this.question.id,
-        questionDetail: this.question,
-        response: {
-          questionId: this.question.id,
-          assessmentQuestionType: this.question.assessmentQuestionType,
-          questionHasOptions: false,
-          fileAndDigitalSignatureFieldAnswer: this.s3FileUploadResult,
-        },
-      };
-      this.$emit("handleTextValue", questionResponse);
+    async removeFile(doc, key, question) {
+      try {
+        console.log( "doc", doc, "key", key, "question", question)
+          if(!this.documents) {
+            this.startLoading();
+            await DeforestationSurveyBuilderService.deleteResponseAttachment(
+              doc.response_id,
+              doc.uuid
+            )
+             this.attachmentDeletion({ mainId: doc.response_id, fileUuid: doc.uuid });
+              this.stopLoading();
+          } else {
+            this.documents.splice(key, 1);
+          }
+          this.s3FileUploadResult = this.s3FileUploadResult.filter(
+            (s) => s.s3key !== key
+          );
+          const questionResponse = {
+            questionId: this.question.id,
+            questionDetail: this.question,
+            response: {
+              questionId: this.question.id,
+              assessmentQuestionType: this.question.assessmentQuestionType,
+              questionHasOptions: false,
+              fileAndDigitalSignatureFieldAnswer: this.s3FileUploadResult,
+            },
+          };
+          this.$emit("handleTextValue", questionResponse);
+
+      } catch (error) {
+           this.stopLoading();
+      }
+      
+    },
+
+    async attachmentDeletion(payload) {
+      console.log("Risk Assessment - attachmentDeletion called with payload:", payload);
+        const { mainId, fileUuid } = payload;
+        const surveyResponse = this.surveyResponses.find(response => response.id === mainId);
+
+        if (surveyResponse) {
+          const attachments = surveyResponse.response.fileAndDigitalSignatureFieldAnswer;
+
+          const fileIndex = attachments.findIndex(file => file.uuid === fileUuid);
+
+          if (fileIndex > -1) {
+            attachments.splice(fileIndex, 1);
+            console.log(`Successfully deleted file ${fileUuid}`);
+          } else {
+            console.warn(`File with uuid ${fileUuid} not found in response ${mainId}.`);
+          }
+        } else {
+          console.warn(`Survey response with id ${mainId} not found.`);
+        }
+
     },
     prevPage() {
       if (this.currentPage > 1) {

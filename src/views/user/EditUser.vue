@@ -207,9 +207,7 @@
                                     </v-radio-group>
                                 </v-col>
                             </v-row>
-
-                            <!-- MFA Security Settings Section -->
-                            <v-row class="mt-4">
+                                                        <v-row class="mt-4">
                                 <v-col cols="12">
                                     <v-divider class="mb-4"></v-divider>
                                     <h3 class="text-h6 mb-4">
@@ -327,7 +325,7 @@ import _ from 'lodash'
                 errors: { firstName: '', lastName: '', email: '', mobile: '', password: '', department: '', role: '', country: "", state: "",city: "",},
                 editedUser: {},
                 password: '',
-                mfaMethods: [
+                 mfaMethods: [
                     { label: 'Email', value: 'email' },
                     { label: 'SMS/Mobile', value: 'mobile', disabled: true }
                 ],
@@ -376,11 +374,8 @@ import _ from 'lodash'
                     this.editedUser.role_id = this.user.user_role_assoc.length > 0 ? this.user.user_role_assoc[0].id : ''
                     this.editedUser.department_id = this.user.user_dept_assoc.length > 0 ? this.user.user_dept_assoc[0].id : ''
                     this.editedUser.countryCode = this.user.countryCode 
-                    
-                    // Load MFA settings
                     this.editedUser.is_mfa_enabled = this.user.is_mfa_enabled || false;
                     this.editedUser.mfa_method = this.user.mfa_method || 'email';
-                    // console.log('user', this.user)
                     
 
                     const _country = this.countries.find(item => item.name === this.editedUser.countryId)
@@ -405,7 +400,6 @@ import _ from 'lodash'
                 this.editedUser.state = this.editedUser.stateId;
                 this.editedUser.countryCode = typeof this.editedUser.countryId == "object"? this.editedUser.countryId.dial_code : this.editedUser.dial_code;
 
-                // Validate MFA settings
                 if (this.editedUser.is_mfa_enabled) {
                     if (this.editedUser.mfa_method === 'email' && !this.editedUser.email) {
                         this.$notify({
@@ -430,7 +424,6 @@ import _ from 'lodash'
                 UserService.updateUser(this.editedUser.userId, this.editedUser)
                 .then( data => {
                     if(data.success){
-                        // Show specific message for MFA changes
                         if (this.editedUser.is_mfa_enabled) {
                             this.$notify({
                                 title: 'Success',

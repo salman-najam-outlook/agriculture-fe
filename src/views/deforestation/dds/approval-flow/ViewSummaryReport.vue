@@ -295,7 +295,7 @@
           </v-card>
 
           <!-- Blockchain Verification Section -->
-          <v-card elevation="0" class="mb-5" v-if="report.transactionHash">
+          <v-card elevation="0" class="mb-5" v-if="report?.transactionHash">
             <v-card-text>
               <v-row class="my-5 pl-3">
                 <v-col cols="6" class="right-border-light">
@@ -333,7 +333,7 @@
                     </v-col>
                   </v-row>
                 </v-col>
-                <v-col cols="6" class="pl-10">
+                <v-col cols="6" class="pl-10" v-if="isShowPublicLink">
                   <v-row>
                     <v-col cols="12">
                       <div class="item-box">
@@ -942,6 +942,9 @@ export default {
         (menu) => menu.id !== "assessment" && menu.id !== "disputes"
       );
     },
+    isShowPublicLink() {
+      return  ['temporary_approved','approved'].includes(this.report?.statusLegends)
+    },
     currentRoles(){
       return currentRoles()
     },
@@ -1270,6 +1273,8 @@ export default {
           assignedTo: report.assignedTo,
           assignedToCfId: report.assignedToCfId,
           userId: report.userId,
+          requestAdditionalInformation: report?.requestAdditionalInformation || [],
+          statusLegends: report?.statusLegends,
         };
 
         this.selectedAssessments = report.requiredAssessment;

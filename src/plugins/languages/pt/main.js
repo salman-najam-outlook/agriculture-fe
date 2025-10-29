@@ -18,6 +18,8 @@ import { pt } from "vuetify/lib/locale";
 import indigenous from './indigenous'
 import esgPlatform from './esgPlatform'
 import carbonCredit from './carbonCredit'
+import updatePassword from './update-password';
+
 export default {
     $vuetify: { ...pt },
     ...auth,
@@ -37,6 +39,7 @@ export default {
     ...indigenous,
     ...esgPlatform,
     ...carbonCredit,
-    ...approvalFlow
+    ...approvalFlow,
+    ...updatePassword,
 }
 

@@ -1,4 +1,3 @@
-// === /components/step2/SectionItem.vue ===
 <template>
   <v-card v-if="!preview" class="section-item mb-6">
     <!-- Section Header -->
@@ -15,7 +14,7 @@
     </v-card-title>
 
     <!-- Section Blocks -->
-    <v-card-text :style="sectionStyle">
+    <v-card-text>
       <component
         v-for="(block, bIdx) in section.blocks"
         :key="bIdx"

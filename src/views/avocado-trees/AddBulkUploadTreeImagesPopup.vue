@@ -54,11 +54,9 @@ mixins: [loadingMixin],
           addRemoveLinks: true,
           autoProcessQueue: true,
           paramName: 'treesFile',
-          //salman
           // headers: {
           //   'oauth-token': this.$store.getters.getAuthToken,
           // }
-          //salman
         },
         notes:"",
         treeImage: "",

@@ -117,7 +117,7 @@
                     </v-card>
                 </v-card>
 
-                <v-card elevation="0" class="mb-5" v-if="report.transactionHash">
+                <v-card elevation="0" class="mb-5" v-if="report?.blockchainLink">
                     <v-card-text>
                         <v-row class="my-5 pl-3">
                             <v-col cols="6" class="right-border-light">
@@ -154,7 +154,7 @@
                                     </v-col>
                                 </v-row>
                             </v-col>
-                            <v-col cols="6" class="pl-10">
+                            <v-col cols="6" class="pl-10" v-if="isShowPublicLink">
                                 <v-row>
                                     <v-col cols="12">
                                         <div class="item-box">
@@ -509,12 +509,12 @@
                                 <div class="d-flex align-center">
                                     <v-text-field prepend-inner-icon="mdi-magnify" outlined height="5px"
                                         :placeholder="$t('search')" dense v-model="search" @input="debouncedGetProductionPlaces"
-                                        class="shrink" clearable>
+                                        class="shrink" clearable v-bind="getTextFieldProps()">
                                     </v-text-field>
 
                                     <v-autocomplete class="mx-2" v-model="countryModel" item-text="name" item-value="name"
                                         :items="countries" :label="$t('deforestation.allCountries')" @change="getProductionPlaces"
-                                        clearable outlined dense>
+                                        clearable outlined dense v-bind="getSelectProps()">
                                     </v-autocomplete>
 
                                     <!-- <v-autocomplete class="mx-2" v-model="producerModel" item-text="text" item-value="val"
@@ -523,7 +523,7 @@
                                     </v-autocomplete> -->
                                     <v-autocomplete class="mx-2" v-model="statusModel" item-text="text" item-value="val"
                                         :items="allStatus" :label="$t('deforestation.EUDRDeforestationStatus')"
-                                        @change="getProductionPlaces" outlined dense clearable>
+                                        @change="getProductionPlaces" outlined dense clearable v-bind="getSelectProps()">
                                     </v-autocomplete>
                                 </div>
                                 <div class="d-flex mb-5 pagination">
@@ -531,18 +531,18 @@
                                         {{ from }} - {{ to }} of {{ totalProductionPlaces }}
                                     </div>
                                     <v-btn class="mx-2" fab small outlined color="primary" :disabled="options.page <= 1"
-                                        @click="pageChange(false)">
+                                        @click="pageChange(false)" v-bind="getButtonProps()">
                                         <v-icon dark>
                                             mdi-chevron-left
                                         </v-icon>
                                     </v-btn>
                                     <v-btn class="mx-2" fab small outlined color="primary"
-                                        :disabled="options.page >= totalPages" @click="pageChange(true)">
+                                        :disabled="options.page >= totalPages" @click="pageChange(true)" v-bind="getButtonProps()">
                                         <v-icon dark>
                                             mdi-chevron-right
                                         </v-icon>
                                     </v-btn>
-                                    <v-btn class="mx-2" @click="exportToPDFForProductionPlaces" fab small outlined color="primary">
+                                    <v-btn class="mx-2" @click="exportToPDFForProductionPlaces" fab small outlined color="primary" v-bind="getButtonProps()">
                                         <v-icon dark>
                                             mdi-tray-arrow-down
                                         </v-icon>
@@ -598,7 +598,7 @@
                                                 <template v-slot:activator="{ on: menu, attrs }">
                                                     <v-tooltip top color="00BD73" max-width="350">
                                                         <template v-slot:activator="{ on: tooltip }">
-                                                            <v-btn x-small fab v-bind="attrs" v-on="{ ...menu, ...tooltip }" color="primary"
+                                                            <v-btn x-small fab v-bind="{...attrs, ...getButtonProps()}" v-on="{ ...menu, ...tooltip }" color="primary"
                                                                 style="margin-left: 20px;"  @click="handleClick(item.deforestationStatus )">
                                                                 <img :src="isIndonesianClient ? '/img/id/todo-list.svg' : isKenyaClient ? '/img/ke/todo-list.svg' : '/icons/todo-list.png'"
                                                                     style="width: 34px; height: 34px; border-radius: 50%;" />
@@ -628,7 +628,7 @@
 
                                             <v-tooltip top color="00BD73" max-width="350">
                                                 <template v-slot:activator="{ on, attrs }">
-                                                    <v-icon v-bind="attrs" v-on="on" class="ml-5 primary--text"
+                                                    <v-icon v-bind="{...attrs, ...getButtonProps()}" v-on="on" class="ml-5 primary--text"
                                                         style="margin-left: 20px;"
                                                         @click="removeFarm(item.farm.id)">mdi-trash-can</v-icon>
 
@@ -694,7 +694,7 @@
                         </div>
                         <div style="width:30%">
                             <v-textarea style="border-radius: 8px;" class="ml-4" outlined :rows="3"
-                                v-model="highRiskComment" label="Comments"></v-textarea>
+                                v-model="highRiskComment" label="Comments" v-bind="getTextareaProps()"></v-textarea>
                         </div>
                         <div></div>
                     </v-row>
@@ -957,11 +957,14 @@ import {debounce} from 'lodash';
 import { isDeforestationExpired,EventBus, isIndonesianClient, isKenyaClient } from '@/utils.js';
 export default {
     computed: {
-
         ...mapGetters("eudrSettings", ["get_EUDR_Settings"]),
+        isShowPublicLink(){
+            return (isKenyaClient() || isIndonesianClient()) && ['temporary_approved','approved'].includes(this.report?.statusLegends);
+        },
         isKenyaClient() {
             return isKenyaClient();
         },
+
         isIndonesianClient() {
         return isIndonesianClient();
         },
@@ -1007,7 +1010,7 @@ export default {
             return this.$store.getters.getUser?.user_organization?.id;
         },
         isDeclerationEnabled() {
-            return this.eudrSettings?.declarations?.some(declaration => declaration.isEnabled);
+            return this.eudrSettings?.declarations?.length > 0;
         },
         filterData() {
             if (
@@ -1516,6 +1519,8 @@ export default {
                     enableOnScreenRiskWarnings:report?.enableOnScreenRiskWarnings,
                     riskWarnings: report?.riskWarnings || [],
                     ddsReportExporter: report?.ddsReportExporter,
+                    requestAdditionalInformation: report?.requestAdditionalInformation || [],
+                    statusLegends:report?.statusLegends,
                 };
 
                 this.selectedAssessments = report.requiredAssessment;

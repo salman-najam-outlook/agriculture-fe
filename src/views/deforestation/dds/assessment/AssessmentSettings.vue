@@ -541,7 +541,7 @@ export default {
   created() {
   },
   mounted() {
-    // let userInfo = JSON.parse(localStorage.getItem("user"));
+// let userInfo = JSON.parse(localStorage.getItem("user"));
     let userInfo = store.getters.getUser;
     this.loggedInUser = userInfo.id;
     this.orgId = userInfo.user_organization.id;

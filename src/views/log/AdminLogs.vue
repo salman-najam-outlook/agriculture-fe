@@ -217,8 +217,8 @@ import store from "../../store";
                 }else {
                     // this.newLogDate = this.logDate+"_activity_log.log";
                     this.newLogDate = date_1 + "/" + date_2
-                    // let user = localStorage.getItem('user')
-                    // let userData = JSON.parse(user)
+                    //let user = localStorage.getItem('user')
+                    //let userData = JSON.parse(user)
                     let user = store.getters.getUser
                     let org_id = user.user_organization.id
                     LogsService.getLogs(this.newLogDate, this.selectedUserType, this.role_number, this.searchPhrase, org_id)

@@ -1,6 +1,6 @@
 import axios from "axios";
-import router from "../../router/index";
-
+import router from "../../router/index"
+//salman 2
 export default {
   async checkAuth(context, data) {
     return new Promise((resolve, reject) => {
@@ -9,20 +9,15 @@ export default {
         .then((response) => {
           response = response.data;
           if (response.success) {
-            const user = response.data; 
-            
-            // Check if MFA is required
+            const user = response.data;
             if (user.mfa_required) {
-              // Return MFA data without setting user data
               resolve({ 
                 success: true,
                 data: user,
                 message: response.message
               });
-              return;
+              return
             }
-            
-            // Regular login flow (no MFA)
             context.commit("setUserData", user);
             localStorage.setItem('isAuthenticated', 'true');
             resolve({ success: "ok" });
@@ -44,7 +39,6 @@ export default {
           response = response.data;
           if (response.success) {
             const user = response.data;
-            // Set user data after successful MFA verification
             context.commit("setUserData", user);
             localStorage.setItem('isAuthenticated', 'true');
             resolve({ 
@@ -65,8 +59,7 @@ export default {
     });
   },
 
-  //salman
-async autoLogin(context) {
+ async autoLogin(context) {
   try {
     const response = await axios.get("/user-data");
     if (response.data.success) {
@@ -76,16 +69,9 @@ async autoLogin(context) {
    console.log(error);
   }
 },
-  //salman
 
   async logout(context) {
-    // localStorage.removeItem('token');
-    // localStorage.removeItem('user');
-    // localStorage.removeItem('refreshtoken');
-    // Clear farmers data
- 
-    //salman
-    await axios.post('/logout')
+   await axios.post('/logout')
         .then( (response) => {
             if(response.data.success) {
               context.commit("unsetUser");
@@ -94,8 +80,6 @@ async autoLogin(context) {
               context.dispatch("memberData/clearFarmersOptions", null, { root: true });
             }
         });
-    //salman
-       
   },
 
   async forgotPassword(context, payLoad) {
@@ -144,7 +128,6 @@ async autoLogin(context) {
       });
   },
 
-  //salman
   async refreshToken(context) {
     return await axios
       .post("/access-token")
@@ -159,7 +142,6 @@ async autoLogin(context) {
         throw err;
       });
   },
-  //salman
 
   async setModulePermittedActions(context, payload) {
     await context.commit("setModulePermittedActions", payload);

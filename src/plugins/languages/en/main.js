@@ -20,6 +20,7 @@ import indigenous from './indigenous'
 import marketplace from './marketplace'
 import esgPlatform from './esgPlatform'
 import ptsi from './ptsi'   
+import updatePassword from './update-password'
 
 export default {
     $vuetify: { ...en },
@@ -43,5 +44,6 @@ export default {
     ...carbonCredit,
     ...ptsi,
     ...approvalFlow,
+    ...updatePassword,
 }
 

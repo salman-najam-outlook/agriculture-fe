@@ -7,11 +7,12 @@
                             item-value="name" :items="translatedCountryList"
                             :placeholder="$t('regionalRiskAssessment.selectCountry')" outlined
                             v-model="selectedCountry" dense
+                            v-bind="getSelectProps()"
                         />
                 </div>
                 <v-spacer></v-spacer>
                 <div class="d-flex mt-1">
-                    <v-btn color="primary" dark class="mr-2" @click="openDisregardDialogBox">
+                    <v-btn color="primary" dark class="mr-2" @click="openDisregardDialogBox" v-bind="getButtonProps()">
                         {{ (!disregardSegmentData[0].enableRiskAssessmentCriteria && !disregardSegmentData[1].enableProtectedAndIndigenousAreas)
                             ? $t("regionalRiskAssessment.addRegionalRiskAssessment") :
                             $t("regionalRiskAssessment.disregard")
@@ -151,6 +152,10 @@ export default {
       diligenceId: {
           required: true
       },
+      readonly: {
+        type: Boolean,
+        default: false
+      }
     },
     async mounted() {
         if (this.countryOfActivity && this.countryOfActivity.length > 0) {
@@ -170,6 +175,9 @@ export default {
         },
     },
     computed: {
+        isReadonlyMode() {
+            return !!this.readonly;
+        },
         getStatusColor() {
             return (level) => {
                 if (typeof level !== 'string') {

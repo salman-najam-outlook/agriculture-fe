@@ -96,8 +96,7 @@
             </template>
             <template v-if="items?.length > 0" v-slot:body="{ items }">
               <tbody>
-                <tr v-for="item in items" :key="item.id" @mouseover="selectItem(item)" @mouseleave="unSelectItem()"
-                  style="position: relative; width: 0; height: 0">
+                <tr v-for="item in items" :key="item.id" style="position: relative; width: 0; height: 0">
                   <template v-if="showStatusType == 'end_user'">
                     <td>{{ item.id }}</td>
                     <td>{{ item.fullName != null ? item.fullName : "N/A" }}</td>
@@ -171,34 +170,53 @@
                     </v-btn>
                   </td>
                   <template>
-                    <div style="position: absolute; right: 10px; top:5px;" v-if="item === selectedItem">
-                      <v-tooltip bottom >
+                    <td>
+                      <v-menu location="start">
                         <template v-slot:activator="{ on, attrs }">
-                          <v-btn x-small fab v-bind="attrs" v-on="on" class="green-shadow" @click="editUser(item)">
-                            <v-icon>mdi-pencil</v-icon>
+                          <v-btn icon v-bind="attrs" v-on="on">
+                            <v-icon>mdi-dots-vertical</v-icon>
                           </v-btn>
                         </template>
-                        <span>{{ $t("edit") }}</span>
-                      </v-tooltip>
-                      <v-tooltip bottom v-if="item.active == 1">
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-btn x-small fab v-bind="attrs" v-on="on" class="ml-1 green-shadow"
-                            @click="changeUserStatus('0', item)">
-                            <v-icon>mdi-trash-can</v-icon>
-                          </v-btn>
-                        </template>
-                        <span>{{ $t("deactivated") }}</span>
-                      </v-tooltip>
-                      <v-tooltip bottom v-else>
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-btn x-small fab v-bind="attrs" v-on="on" class="ml-1 green-shadow"
-                            @click="changeUserStatus('1', item)">
-                            <v-icon>mdi-play</v-icon>
-                          </v-btn>
-                        </template>
-                        <span>{{ $t("activate") }}</span>
-                      </v-tooltip>
-                    </div>
+                        <v-list>
+                          <v-list-item>
+                            <v-list-item-title
+                              class="cursor-pointer"
+                              @click="editUser(item)"
+                            >
+                                {{ $t("edit") }}
+                              </v-list-item-title
+                            >
+                          </v-list-item>
+                          <v-list-item v-if="item.active == 1">
+                            <v-list-item-title
+                              class="cursor-pointer"
+                              @click="changeUserStatus('0', item)"
+                            >
+                                {{ $t("deactivate") }}
+                              </v-list-item-title
+                            >
+                          </v-list-item>
+                          <v-list-item v-else>
+                            <v-list-item-title
+                              class="cursor-pointer"
+                              @click="changeUserStatus('1', item)"
+                            >
+                                {{ $t("activate") }}
+                              </v-list-item-title
+                            >
+                          </v-list-item>
+                          <v-list-item v-if="showStatusType == 'end_user' && !!item.email?.trim().length">
+                            <v-list-item-title
+                              class="cursor-pointer"
+                              @click="onUpdatePassword(item)"
+                            >
+                                {{ $t('password.updatePassword') }}
+                              </v-list-item-title
+                            >
+                          </v-list-item>
+                        </v-list>
+                      </v-menu>
+                    </td>
                   </template>
                 </tr>
               </tbody>
@@ -283,6 +301,18 @@
          ></confirm-box>
     <edit-app-user v-if="showEditAppUser" :user="editedUser" @appUserUpdated="appUserUpdated"
       @closeUpdateUser="editUserClosed" :dialogU="showEditAppUser"></edit-app-user>
+    <SetPasswordDialog
+      v-model="isUpdatePasswordDialogOpen"
+      :userId="selectedUserForUpdatePassword?.id"
+      @passwordSet="onPasswordSetFromDialog"
+      @cancel="onPasswordSetCancel"
+    ></SetPasswordDialog>
+    <PasswordSentMessageDialog
+      v-model="isPasswordSentMessageDialogOpen"
+      :userName="selectedUserForUpdatePassword?.fullName"
+      @close="onPasswordSentMessageClose"
+    >
+    </PasswordSentMessageDialog>
   </div>
 </template>
 
@@ -301,6 +331,8 @@ import AddAppUser from "@/views/user/AddAppUser";
 // import AddSingleAppUser from './AddSingleAppUser.vue';
 import AddMultipleAppUser from './AddMultipleAppUser.vue';
 import { debounce } from "lodash";
+import SetPasswordDialog from './SetPasswordDialog.vue';
+import PasswordSentMessageDialog from './PasswordSentMessageDialog.vue';
 
 export default {
   computed: {
@@ -353,11 +385,52 @@ export default {
     "add-app-user": AddAppUser,
     "confirm-box": ConfirmBox,
     "edit-user": EditUser,
+    SetPasswordDialog,
+    PasswordSentMessageDialog,
     EditAppUser,
     // AddSingleAppUser,
     AddMultipleAppUser,
   },
   methods: {
+    onPasswordSetCancel() {
+      this.isUpdatePasswordDialogOpen = false;
+      this.selectedUserForUpdatePassword = null;
+    },
+    onUpdatePassword(user) {
+      this.selectedUserForUpdatePassword = user;
+      this.isUpdatePasswordDialogOpen = true;
+    },
+    async onPasswordSetFromDialog({ password, userId }) {
+      try {
+        this.startLoading();
+        const response = await UserService.updateUserPassword(userId, password);
+        if(response.success) {
+          this.$notify({
+            title: this.$t("success"),
+            type: "success",
+          });
+          this.isUpdatePasswordDialogOpen = false;
+          this.isPasswordSentMessageDialogOpen = true;
+        } else {
+          this.$notify({
+            title: this.$t("failed"),
+            type: "error",
+          });
+        }
+      } catch (error) {
+        console.error("Error updating password:", error);
+        this.$notify({
+          title: this.$t("failed"),
+          type: "error",
+        });
+      } finally {
+        this.stopLoading();
+      }
+    },
+    onPasswordSentMessageClose() {
+      this.selectedUserForUpdatePassword = null;
+      this.isPasswordSentMessageDialogOpen = false;
+    },
     addUser() {
       this.showAddUser = true;
     },
@@ -367,6 +440,9 @@ export default {
     userAdded(res) {
       if (res.success) {
         this.showAddAppUser = false
+        if(res.user?.password) {
+          this.isPasswordSentMessageDialogOpen = true;
+        }
         this.getUsers();
         this.getUserData();
         this.$notify({
@@ -399,6 +475,9 @@ export default {
     appUserUpdated(res) {
       console.log(res,"appUserUpdatedappUserUpdatedappUserUpdated" )
       if (res.success) {
+        if(res.user?.password) {
+          this.isPasswordSentMessageDialogOpen = true;
+        }
         this.getUsers();
         this.$notify({
           title: this.$t("addEdituser.userUpdated"),
@@ -411,12 +490,6 @@ export default {
           type: "error",
         });
       }
-    },
-    selectItem(item) {
-      this.selectedItem = item;
-    },
-    unSelectItem() {
-      this.selectedItem = false;
     },
     async handleUser(userType) {
       this.selectedUserType = userType;
@@ -652,6 +725,9 @@ export default {
   },
   data() {
     return {
+      isUpdatePasswordDialogOpen: false,
+      isPasswordSentMessageDialogOpen: false,
+      selectedUserForUpdatePassword: null,
       totalUserCount: 0,
       offlineUserCount: 0,
       showAddMultipleUser: false,
@@ -702,7 +778,6 @@ export default {
       search: "",
       selected: [],
       items: [],
-      selectedItem: false,
       loading: false,
       showAddUser: false,
       showEditUser: false,
@@ -807,6 +882,12 @@ export default {
           sortable: true,
           class: "black--text text-no-wrap",
         },
+        {
+          text: '',
+          align: "start",
+          value: "action",
+          class: "black--text",
+        },
       ],
       adminHeaders: [
         {
@@ -854,6 +935,12 @@ export default {
           align: "center",
           sortable: true,
           class: "black--text text-no-wrap",
+        },
+        {
+          text: '',
+          align: "start",
+          value: "action",
+          class: "black--text",
         },
       ],
     };

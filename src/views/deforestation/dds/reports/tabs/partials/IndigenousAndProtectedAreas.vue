@@ -30,7 +30,7 @@
                             <div class="srch mr-2">
                                 <v-text-field prepend-inner-icon="mdi-magnify" outlined height="5px"
                                     :placeholder="$t('search')" dense v-model="search" @change="searchQuery"
-                                    class="shrink">
+                                    class="shrink" v-bind="getTextFieldProps()">
                                 </v-text-field>
                             </div>
                             <v-spacer></v-spacer>
@@ -38,13 +38,13 @@
                                 {{ from }} - {{ to }} {{ $t('of') }} {{ totalProducts }}
                             </div>
                             <v-btn class="mx-2" fab small outlined color="primary" :disabled="options.page <= 1"
-                                @click="pageChange(false)">
+                                @click="pageChange(false)" v-bind="getButtonProps()">
                                 <v-icon dark>
                                     mdi-chevron-left
                                 </v-icon>
                             </v-btn>
                             <v-btn class="mx-2" fab small outlined color="primary"
-                                :disabled="to >= totalProducts" @click="pageChange(true)">
+                                :disabled="to >= totalProducts" @click="pageChange(true)" v-bind="getButtonProps()">
                                 <v-icon dark>
                                     mdi-chevron-right
                                 </v-icon>                             
@@ -52,7 +52,7 @@
                             <v-menu v-model="menu" :close-on-content-click="false" :nudge-width="200" left
                                 :min-width="417">
                                 <template v-slot:activator="{ on, attrs }">
-                                    <v-btn class="mx-2" fab small outlined color="primary" v-bind="attrs" v-on="on">
+                                    <v-btn class="mx-2" fab small outlined color="primary" v-bind="{...attrs, ...getButtonProps()}" v-on="on">
                                         <v-icon dark>mdi-cog-outline </v-icon>
                                     </v-btn>
                                 </template>
@@ -93,10 +93,10 @@
                                         <v-card-actions class="mb-5">
                                             <v-spacer></v-spacer>
 
-                                            <v-btn outlined color="primary" @click="resetDefaut" width="190">
+                                            <v-btn outlined color="primary" @click="resetDefaut" width="190" v-bind="getButtonProps()">
                                                 <span class="text-truncate" style="max-width:150px">{{ $t("deforestation.restoreDefault") }}</span>
                                             </v-btn>
-                                            <v-btn color="primary" @click="resetTableStructure" width="190">
+                                            <v-btn color="primary" @click="resetTableStructure" width="190" v-bind="getButtonProps()">
                                                 {{ $t("deforestation.apply") }}
                                             </v-btn>
                                         </v-card-actions>
@@ -106,7 +106,7 @@
 
                             <v-tooltip top color="black" max-width="350">
                                 <template v-slot:activator="{ on, attrs }">
-                                    <v-btn class="mx-2" fab small outlined color="primary" v-bind="attrs" v-on="on"
+                                    <v-btn class="mx-2" fab small outlined color="primary" v-bind="{...attrs, ...getButtonProps()}" v-on="on"
                                         @click="exportToPDF">
                                         <v-icon dark>mdi-download</v-icon>
                                     </v-btn>
@@ -118,7 +118,7 @@
                             </v-tooltip>
                             <v-tooltip top color="black" max-width="350">
                                 <template v-slot:activator="{ on, attrs }">
-                                    <v-btn class="mx-2" fab small outlined color="primary" v-bind="attrs" v-on="on"
+                                    <v-btn class="mx-2" fab small outlined color="primary" v-bind="{...attrs, ...getButtonProps()}" v-on="on"
                                         @click="printPDF('document')">
                                         <v-icon dark> mdi-printer </v-icon>
                                     </v-btn>
@@ -167,18 +167,19 @@
                         <div>
                             <v-menu location="start">
                                 <template v-slot:activator="{ on, attrs }">
-                                    <v-btn icon v-bind="attrs" v-on="on">
+                                    <v-btn icon v-bind="{...attrs, ...getButtonProps()}" v-on="on">
                                         <v-icon>mdi-dots-vertical</v-icon>
                                     </v-btn>
                                 </template>
                                 <v-list>
                                     <v-list-item 
                                     v-if="showRiskMitigationList(item)" 
-                                    @click="showRiskMitigationModel(item)">
+                                    :disabled="isReadonlyMode"
+                                    @click="!isReadonlyMode && showRiskMitigationModel(item)">
                                         <v-list-item-title class="cursor-pointer">{{ $t('deforestation.riskMitigation')
                                             }}</v-list-item-title>
                                     </v-list-item>
-                                    <v-list-item @click="removeFarm(item.farmId)">
+                                    <v-list-item :disabled="isReadonlyMode" @click="!isReadonlyMode && removeFarm(item.farmId)">
                                         <v-list-item-title class="cursor-pointer">{{ $t('delete')
                                             }}</v-list-item-title>
                                     </v-list-item>
@@ -190,10 +191,10 @@
                 </v-data-table>
             </div>
             <div class="pa-4">
-                <v-btn color="primary" dark class="mr-2" @click="showOneRiskMitigationModel()">
+                <v-btn color="primary" dark class="mr-2" @click="showOneRiskMitigationModel()" v-bind="getButtonProps()">
                     {{ $t("indigenousAndProtectedAreas.attachOneRiskMitigation") }}
                 </v-btn>
-                <v-btn color="primary" dark class="mr-2" @click="removeAllFarms">
+                <v-btn color="primary" dark class="mr-2" @click="removeAllFarms" v-bind="getButtonProps()">
                     {{ $t("indigenousAndProtectedAreas.removeAllFlaggedFarms") }}
                 </v-btn>
                 <v-tooltip bottom color="00BD73" max-width="500">
@@ -281,6 +282,9 @@ export default {
         ...mapGetters("eudrSettings", ["get_EUDR_Settings"]),
         eudrSettings() {
             return this.get_EUDR_Settings;
+        },
+        isReadonlyMode() {
+            return !!this.readonly;
         },
         filteredHeaders() {
             return this.headers.filter(header => this.selectedHeaders.includes(header.value));
@@ -419,6 +423,10 @@ export default {
         countryOfActivity: {
           required: true
       },
+      readonly: {
+        type: Boolean,
+        default: false
+      }
     },
     methods: {
         showRiskMitigationModel(item) {

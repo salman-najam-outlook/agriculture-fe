@@ -254,6 +254,11 @@
                                             :error-messages="errors.validityUpTo"
                                             :rules="rules.membershipValidity"></v-text-field>
                                     </div>
+                                    <div v-if="!!user.email?.trim().length" class="col-12">
+                                        <v-btn color="primary" outlined @click="isSetPasswordDialogOpen = true">
+                                            {{ $t('password.setPassword') }}
+                                        </v-btn>
+                                    </div>
                                     <!-- <div  class="col-lg-6 col-md-6 col-sm-6 col-xs-12 py-0">
                                      <label for="department">{{ $t('department')}}</label>
                                     <v-select
@@ -303,6 +308,11 @@
                 </v-dialog>
             </div>
         </template>
+        <SetPasswordDialog
+            v-model="isSetPasswordDialogOpen"
+            @passwordSet="onPasswordSetFromDialog"
+            @cancel="onPasswordSetCancel"
+        ></SetPasswordDialog>
     </v-container>
 </template>
 
@@ -314,6 +324,7 @@ import { getCountries, getStates } from 'country-state-picker'
 import UserService from "@/_services/UserService"
 // import { countries } from "@/constants/countries.js"
 import GenerateKey from "../activation-key/GenerateKey.vue";
+import SetPasswordDialog from './SetPasswordDialog.vue';
 
 export default {
     created() {
@@ -336,7 +347,8 @@ export default {
         }
     },
     components: {
-        GenerateKey
+        GenerateKey,
+        SetPasswordDialog,
     },
     computed: {
         dialog() {
@@ -345,6 +357,7 @@ export default {
     },
     data() {
         return {
+            isSetPasswordDialogOpen: false,
             show: true,
             country: "",
             countries: [],
@@ -422,6 +435,13 @@ export default {
         }
     },
     methods: {
+        onPasswordSetFromDialog({ password }) {
+            this.isSetPasswordDialogOpen = false;
+            this.user.password = password;
+        },
+        onPasswordSetCancel() {
+            this.isSetPasswordDialogOpen = false;
+        },
         async getUnassignedActivationKey(){
             const requestParams = {
                 page: 1,
@@ -512,15 +532,18 @@ export default {
             data.countryCode = countryObj?.dial_code || null
             data.active = parseInt(this.user.status);
             data.isMarketPlaceUser = this.isMarketPlaceUser;
+            if(!data.email?.trim().length) {
+                delete data.password;
+            }
             let formData = new FormData();
             Object.keys(data).forEach(key => {
                 formData.append(key, data[key]);
             });
 
             UserService.addAppUser(formData)
-                .then(data => {
-                    if (data.success) {
-                        this.$emit('userAdded', { success: true, message: data.message });
+                .then(res => {
+                    if (res.success) {
+                        this.$emit('userAdded', { success: true, message: res.message, user: data });
                     } else {
                         this.$emit('userAdded', { success: false, message: data.message });
                     }

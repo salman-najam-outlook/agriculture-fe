@@ -837,6 +837,7 @@ export default {
         approvalConfirmationMessage: "Are you sure you want to approve the selected reports?",
         approvalOnceApprovedTitle: "Once approved",
         approvalVerifiedByPtsi: "Each report will be marked as verified by PTSI.",
+        approvalVerifiedByAgent: "Each report will be marked as verified by NACCU.",
         approvalConfirmationMessageShipment: "Are you sure you want to approve the selected shipments?",
         approvalVerifiedByShipment: "This report will be marked as Approved",
         allAssociatedReportsWillBeApprovedShipment: "All associated DDS reports will also be approved",

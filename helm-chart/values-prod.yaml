@@ -1,0 +1,39 @@
+deployment:
+  name: admin-panel-fe-prod
+  namespace: admin-panel-fe-prod
+  replicaCount: 1
+  containerName: admin-panel-fe-prod
+  image: 495454422438.dkr.ecr.us-east-1.amazonaws.com/admin-panel-fe-prod
+  resources: {}
+  containerPort: 3000
+
+service:
+  type: NodePort
+  port: 3000
+
+hpa:
+  enabled: true
+  name: admin-panel-fe-prod
+  maxReplicas: 1
+  minReplicas: 1
+  targetCPUUtilizationPercentage: 90
+
+configMap:
+  enabled: true
+  depname: envfile
+  name: sass-env-admin-panel-fe-file
+  fileLocation: /src/.env
+  subPath: .env
+
+
+ingress:
+  name: cf-reporting-farmer-dev-ingress
+  annotations: 
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/group.name: default-prod
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:495454422438:certificate/6b7881a0-285c-4979-845a-91571957f9c9
+    alb.ingress.kubernetes.io/backend-protocol: HTTP
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}'
+  hostName: admin-prod.dimitra.dev

@@ -443,7 +443,7 @@ export default {
       const isPtsiRole = isIndonesianClient() ? "ptsi" : this.isKenyaClient ? "naccu" : "non-ptsi";
       this.warningDialog = false;
       if (downloadType == 'pdf') {
-        const fileName =  `DDS-Final-Report-${this.report?.internalReferenceNumber || 'n/a'}-${this.report?.containerIds.join('-')}.pdf`;
+        const fileName =  `DDS-Final-Report-${this.report?.internalReferenceNumber || 'n/a'}-${this.report?.containerIds?.join('-')}.pdf`;
         this.startLoading()
         this.downloadSourceFile(`${process.env.VUE_APP_DEFORESTRATION_REPORTING_API_BASE_URL}/diligence-report/final-report-pdf/${this.diligenceId}/${pdfType}/${isPtsiRole}`,"application/pdf", fileName)
            .then(() => {
@@ -1000,7 +1000,8 @@ export default {
                 totalHighDeforestationProductionPlaces: report.totalHighDeforestationProductionPlaces,
                 totalDeforestationAssessments: report.totalDeforestationAssessments,
                 is_report_concluded:report?.is_report_concluded,
-                is_dds_status_update:report?.is_dds_status_update
+                is_dds_status_update:report?.is_dds_status_update,
+                reportAdditionalInformation: report?.requestAdditionalInformation || [],
             };
 
             this.selectedAssessments = report.requiredAssessment;

@@ -99,11 +99,12 @@ import { isKenyaClient } from "@/utils"
 import axios from "axios"
 import _ from "lodash"
 import store from "../../store"
+
 export default {
   name: "sidebar",
   created() {
     const getNotSyncSidebar = async () => {
-      if ( 
+      if (
         localStorage.getItem("SIDEBAR_NOT_SYNC") &&
         this.$store.state.language != "en"
       ) {
@@ -116,10 +117,9 @@ export default {
         // let user = localStorage.getItem("user")
         // user = JSON.parse(user)
         const user = store.getters.getUser;
-        user.sideBarMenu = res.data.data
         this.$store.commit("setUserOnly", user)
-        // localStorage.setItem("user", JSON.stringify(user))
-        // localStorage.removeItem("SIDEBAR_NOT_SYNC")
+        //localStorage.setItem("user", JSON.stringify(user))
+        //localStorage.removeItem("SIDEBAR_NOT_SYNC")
       }
     }
     getNotSyncSidebar()
@@ -156,12 +156,12 @@ export default {
       })
 
       // Normalize route names coming from backend/localStorage to client router names
-      finalPerms = finalPerms.map((p) => {
-        if (p && p.id === 'dds_root_dashboard') {
-          p.route_path_name = 'dashboard'
-        }
-        return p
-      })
+      // finalPerms = finalPerms.map((p) => {
+      //   if (p && p.id === 'dds_root_dashboard') {
+      //     p.route_path_name = 'dashboard'
+      //   }
+      //   return p
+      // })
 
       //finalPerms.push(this.marketPlaces)
 

@@ -317,7 +317,7 @@
             </label>
             <v-text-field
               v-model="report.exporterEmail"
-              outlined
+              v-bind="getTextFieldProps()"
               dense
               :placeholder="isKenyaClient ? $t('deforestation.enterExporterEmailKenya') :$t('deforestation.enterExporterEmail')"
               hide-details
@@ -425,15 +425,14 @@
                 </v-tooltip>
                 <v-autocomplete
                   :rules="addReportFormRules.supplierId"
-                  outlined
                   v-model="report.supplier"
                   item-text="fullName"
                   item-value="id"
                   :items="formattedSupplier"
-                  variant="outlined"
                   dense
                   return-object
                   :placeholder="$t('select')"
+                  v-bind="getSelectProps()"
                 >
                   <!-- Add a footer slot -->
                   <template v-slot:append-item>
@@ -526,15 +525,14 @@
                 <v-autocomplete
                   :loading="supplierOperatorLoading"
                   :rules="addReportFormRules.operatorId"
-                  outlined
                   v-model="report.operator"
                   item-text="fullName"
                   item-value="id"
                   :items="formattedOperator"
-                  variant="outlined"
                   dense
                   return-object
                   :placeholder="$t('select')"
+                  v-bind="getSelectProps()"
                 >
                   <!-- Add a footer slot -->
                   <template v-slot:append-item>
@@ -635,7 +633,7 @@
             </v-col>
 
             <v-col cols="12">
-              <v-radio-group  :rules="addReportFormRules.whoAddPlaceData" v-model="report.whoAddPlaceData" row>
+              <v-radio-group  :rules="addReportFormRules.whoAddPlaceData" v-model="report.whoAddPlaceData" v-bind="getRadioGroupProps()" row>
                 <v-radio :label="$t('dueDiligence.operator')" value="operator"></v-radio>
                 <v-radio :label="$t('dueDiligence.supplier')" value="supplier"></v-radio>
               </v-radio-group>
@@ -668,7 +666,7 @@
                 <v-text-field
                   :placeholder='isKenyaClient ?  $t("deforestation.internalRefNoKenya") :  $t("deforestation.internalRefNo")'
                   v-model="report.internalReferenceNumber"
-                  outlined
+                  v-bind="getTextFieldProps()"
                   dense
                 ></v-text-field>
               </v-col>
@@ -764,7 +762,7 @@
               </v-col>
 
               <v-col cols="12">
-                <v-radio-group v-model="report.activity" row>
+                <v-radio-group v-model="report.activity" v-bind="getRadioGroupProps()" row>
                   <v-radio
                     :label="$t('dueDiligence.domestic')"
                     value="Domestic"
@@ -820,10 +818,11 @@
                 <v-autocomplete                 
                 :label="$t('profileSetting.selectCountry')"
                 :placeholder="$t('profileSetting.selectCountry')"
-                clearable outlined
+                clearable
                 v-model="report.countryOfActivity" :items="europeanCountriesOnly" item-text="translatedName"
                 item-value="name" cache-items :search-input.sync="search" dense chips small-chips solo flat
                 multiple
+                v-bind="getSelectProps()"
                 >
                 <!-- :rules="[(v) => (Array.isArray(v) && v.length > 0) || $t('deforestation.thisFieldIsRequired')]" -->
                 </v-autocomplete>
@@ -835,7 +834,6 @@
                 <v-autocomplete
                 :label="$t('profileSetting.selectCountry')"
                 :placeholder="$t('profileSetting.selectCountry')"
-                  outlined
                   v-model="report.countryOfEntry"
                   :items="europeanCountriesOnly"
                   item-text="translatedName"
@@ -843,6 +841,7 @@
                   dense
                   solo
                   flat
+                  v-bind="getSelectProps()"
                 >
                 </v-autocomplete>
               </v-col>
@@ -875,8 +874,8 @@
                   name="input-7-2"
                   class="v-textarea--outlined"
                   auto-grow
-                  outlined
                   v-model="report.comments"
+                  v-bind="getTextareaProps()"
                 ></v-textarea>
               </v-col>
             </v-row>
@@ -913,7 +912,7 @@
                   <div class="d-flex align-center">
                     <v-text-field
                       v-model="containers[index]"
-                      outlined
+                      v-bind="getTextFieldProps()"
                       dense
                       :placeholder="isKenyaClient ? $t('dueDiligence.lotId') :  $t('blends.createBlends.containerId')"
                       :error-messages="errors[index] ? [$t('blends.createBlends.uniqueContainerId')] : []"
@@ -988,7 +987,6 @@
                   @change="onProductChange"
                   :rules="[(v) => !!v || this.$t('deforestation.thisFieldIsRequired')]"
                   :placeholder="$t('dueDiligence.selectProduct')"
-                  outlined
                   v-model="report.product"
                   :items="productList"
                   item-text="name"
@@ -997,6 +995,7 @@
                   solo
                   flat
                   return-object
+                  v-bind="getSelectProps()"
                 >
                 </v-autocomplete>
               </v-col>
@@ -1019,7 +1018,6 @@
                   </v-tooltip>
                 <v-autocomplete
                   :placeholder="$t('dueDiligence.selectSubProduct')"
-                  outlined
                   v-model="report.subProduct"
                   :items="subProductList"
                   :disabled="report.product == '' ? true : false"
@@ -1029,6 +1027,7 @@
                   solo
                   flat
                   return-object
+                  v-bind="getSelectProps()"
                 >
                 </v-autocomplete>
               </v-col>
@@ -1055,8 +1054,8 @@
                   name="input-7-1"
                   class="v-textarea--outlined"
                   auto-grow
-                  outlined
                   v-model="report.productDescription"
+                  v-bind="getTextareaProps()"
                 ></v-textarea>
               </v-col>
             </v-row>
@@ -1083,7 +1082,7 @@
                   :placeholder="$t('deforestation.netMass')"
                   :suffix="eudrSettings.product_mass_unit"
                   v-model="report.productNetMass"
-                  outlined
+                  v-bind="getTextFieldProps()"
                   dense
                 ></v-text-field>
               </v-col>
@@ -1109,7 +1108,7 @@
                   :placeholder="$t('deforestation.volume')"
                   :suffix="eudrSettings.volume_unit"
                   v-model="report.productVolume"
-                  outlined
+                  v-bind="getTextFieldProps()"
                   dense
                 ></v-text-field>
               </v-col>
@@ -1133,7 +1132,7 @@
                 <v-text-field
                   :placeholder="$t('deforestation.scietificName')"
                   v-model="report.productScientificName"
-                  outlined
+                  v-bind="getTextFieldProps()"
                   dense
                 ></v-text-field>
               </v-col>
@@ -1157,7 +1156,7 @@
                 <v-text-field
                   :placeholder="$t('deforestation.commonName')"
                   v-model="report.productCommonName"
-                  outlined
+                  v-bind="getTextFieldProps()"
                   dense
                 ></v-text-field>
               </v-col>
@@ -1202,7 +1201,6 @@
                   :label="$t('profileSetting.selectCountry')"
                   :placeholder="$t('profileSetting.selectCountry')"
                   clearable
-                  outlined
                   v-model="report.assessment.selectedCountries[0]"
                   :items="countriesOnly"
                   item-text="translatedName"
@@ -1215,6 +1213,7 @@
                   :rules="[(v) => !!v || $t('deforestation.thisFieldIsRequired')]"
                   return-object
                   @input="filterAssessment"
+                  v-bind="getSelectProps()"
                 >
                 </v-autocomplete>
               </v-col>
@@ -1235,6 +1234,7 @@
                   :value="1"
                   hide-details
                   disabled
+                  v-bind="getCheckboxProps()"
                 ></v-checkbox>
 
                 <v-checkbox
@@ -1244,6 +1244,7 @@
                   color="primary"
                   :value="report.assessment.assessments[index].id"
                   hide-details
+                  v-bind="getCheckboxProps()"
                 ></v-checkbox>
               </v-col>
 
@@ -1252,7 +1253,7 @@
                   v-model="defaultAssessmentType"
                   class="mr-1"
                   dense
-                  outlined
+                  v-bind="getSelectProps()"
                 />
                 <v-select
                   v-else
@@ -1266,7 +1267,7 @@
                   dense
                   item-text="name"
                   item-value="value"
-                  outlined
+                  v-bind="getSelectProps()"
                 />
               </v-col>
               <v-col cols="3">
@@ -1278,8 +1279,8 @@
                   dense
                   item-text="name"
                   item-value="value"
-                  outlined
                   disabled
+                  v-bind="getSelectProps()"
                 />
                 <v-select
                   v-else
@@ -1289,7 +1290,7 @@
                   dense
                   item-text="name"
                   item-value="value"
-                  outlined
+                  v-bind="getSelectProps()"
                 />
               </v-col>
             </v-row>
@@ -1304,6 +1305,7 @@
                 color="primary"
                 :value="1"
                 hide-details
+                v-bind="getCheckboxProps()"
               ></v-checkbox>
 
               
@@ -1350,6 +1352,7 @@
                   v-model="report.enableOnScreenRiskWarnings"
                   :label="$t('dueDiligence.enableRiskWarnings')"
                   color="primary"
+                  v-bind="getCheckboxProps()"
                 ></v-checkbox>
               </v-col>
             </v-row>
@@ -1805,6 +1808,7 @@ export default {
           enableRiskWarningPopupNotifications:
             report.enableRiskWarningPopupNotifications,
           enableOnScreenRiskWarnings: report.enableOnScreenRiskWarnings,
+          requestAdditionalInformation: report.requestAdditionalInformation || [],
         };
         this.regionalRiskAssessment = report.enableRegionalRiskAssessment?1:0;
 

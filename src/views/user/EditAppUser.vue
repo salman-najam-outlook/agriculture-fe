@@ -246,6 +246,13 @@
                                     </template>
                                 </v-autocomplete>
                             </div> -->
+                <v-row v-if="!!editedUser.email?.trim().length">
+                  <v-col cols="12" class="text-left">
+                    <v-btn color="primary" outlined @click="isSetPasswordDialogOpen = true">
+                      {{ $t('password.setPassword') }}
+                    </v-btn>
+                  </v-col>
+                </v-row>
                 <v-card-actions class="mt-10">
                   <v-spacer></v-spacer>
                   <v-btn @click="closeModal" outlined right height="44" width="116" depressed color="primary">
@@ -261,6 +268,12 @@
         </v-dialog>
       </div>
     </template>
+    <SetPasswordDialog
+      v-model="isSetPasswordDialogOpen"
+      :userId="this.user?.id"
+      @passwordSet="onPasswordSetFromDialog"
+      @cancel="onPasswordSetCancel"
+    ></SetPasswordDialog>
   </v-container>
 </template>
 
@@ -274,8 +287,12 @@ import UserService from "@/_services/UserService";
 import ActivationKeyService from "@/_services/ActivationService.js";
 import { getCountries, getStates } from 'country-state-picker'
 import _ from "lodash";
+import SetPasswordDialog from './SetPasswordDialog.vue';
 
 export default {
+  components: {
+    SetPasswordDialog,
+  },
   mounted() {
     const fetchData = async () => {
       this.startLoading();
@@ -304,6 +321,7 @@ export default {
   },
   data() {
     return {
+      isSetPasswordDialogOpen: false,
       finalDate: '',
       extendDays: 0,
       extendReason: "",
@@ -362,6 +380,13 @@ export default {
     };
   },
   methods: {
+    onPasswordSetFromDialog({ password }) {
+      this.isSetPasswordDialogOpen = false;
+      this.editedUser.password = password;
+    },
+    onPasswordSetCancel() {
+      this.isSetPasswordDialogOpen = false;
+    },
     filterCountry(item, queryText) {
       const byName = item?.Name.toLowerCase()
       const searchText = queryText.toLowerCase()
@@ -456,6 +481,7 @@ export default {
         membershipExtendedDays: this.extendDays,
         membershipExtensionReason: this.extendReason,
         isMarketPlaceUser: this.isMarketPlaceUser,
+        password: this.editedUser.email?.trim().length ? this.editedUser.password : undefined,
       };
       // console.log('userData', user)
       this.startLoading();
@@ -466,6 +492,7 @@ export default {
             this.$emit("appUserUpdated", {
               success: true,
               message: data.message,
+              user,
             });
             this.closeModal()
           }

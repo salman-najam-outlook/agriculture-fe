@@ -80,7 +80,8 @@ export default {
         },
         isDeclared() {
             // Directly return the reactive value from eudrSettings
-            return this.eudrSettings.declarations?.[0]?.isEnabled || false;
+            // return this.eudrSettings.declarations?.[0]?.isEnabled || false;
+            return true;
         }
     },
     watch: {

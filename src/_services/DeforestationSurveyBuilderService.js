@@ -567,6 +567,7 @@ export default {
                 attachmentLink
                 s3key
                 comment
+                uuid
               }
               selectedOptions{
                 selectedOptionId
@@ -650,5 +651,28 @@ export default {
       assessmentId,
       farmsList
     });
-  }
+  },
+
+    async deleteResponseAttachment(responseId, attachmentUuid) {
+    const graphqlQuery = `
+      mutation DeleteResponseAttachment($responseId: Int!, $attachmentUuid: String!) {
+        deleteResponseAttachment(responseId: $responseId, attachmentUuid: $attachmentUuid) {
+          id
+          response {
+            fileAndDigitalSignatureFieldAnswer {
+              uuid
+              s3key
+              attachmentLink
+              comment
+            }
+          }
+        }
+      }
+    `;
+
+    return postGraphqlQuery(graphqlQuery, {
+      responseId,
+      attachmentUuid,
+    });
+  },
 };

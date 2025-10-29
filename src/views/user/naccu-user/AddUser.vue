@@ -101,8 +101,8 @@ export default {
   methods: {
     setUserDataFromLocalStorage() {
       try {
-        // const userData = JSON.parse(localStorage.getItem('user'));
-        let userData = store.getters.getUser
+        //const userData = JSON.parse(localStorage.getItem('user'));
+        let userData = store.getters.getUser;
         if (userData && userData?.subOrg) {
           this.organizationCode = userData?.subOrg?.code;
           this.subOrgUserId = userData?.id.toString();

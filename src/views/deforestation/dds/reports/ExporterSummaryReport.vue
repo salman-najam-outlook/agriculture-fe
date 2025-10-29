@@ -49,7 +49,7 @@
                   <v-col sm="3">
                     <div class="item-box">
                       <p class="text-subtitle-1 mb-2"> 
-                        {{  $t("deforestation.internalReferenceNumber")  }}
+                        {{  $t("dueDiligence.internalReferenceNumber")  }}
                       </p>
                       <p class="text-subtitle-1 font-weight-bold">{{ report.EUDRReferenceNumber || '-' }}</p>
                     </div>
@@ -300,7 +300,7 @@
           </v-card>
 
           <!-- Blockchain Verification Section -->
-          <v-card elevation="0" class="mb-5" v-if="report.transactionHash">
+          <v-card elevation="0" class="mb-5" v-if="report?.transactionHash">
             <v-card-text>
               <v-row class="my-5 pl-3">
                 <v-col cols="6" class="right-border-light">
@@ -337,7 +337,7 @@
                     </v-col>
                   </v-row>
                 </v-col>
-                <v-col cols="6" class="pl-10">
+                <v-col cols="6" class="pl-10" v-if="isShowPublicLink">
                   <v-row>
                     <v-col cols="12">
                       <div class="item-box">
@@ -924,6 +924,9 @@ export default {
     },
     isDdsExporter() {
       return currentRoles().includes('dds_exporter');
+    },
+    isShowPublicLink(){
+        return (isKenyaClient() || isIndonesianClient()) && ['temporary_approved','approved'].includes(this.report?.statusLegends);
     },
     menusWithoutReport() {
       return this.menus.filter(
@@ -1667,6 +1670,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       confirmDialog:false,
       report: {},
       totalProductionPlaces: 0,

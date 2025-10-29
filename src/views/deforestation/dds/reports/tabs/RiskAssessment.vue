@@ -106,7 +106,7 @@
                 </v-col>
                 <v-col cols="6">
                   <div class="text-box mr-4">
-                    <v-textarea v-model="docs.comment" :placeholder="$t('activationKey.comments')" outlined></v-textarea>
+                    <v-textarea v-model="docs.comment" :placeholder="$t('activationKey.comments')" outlined v-bind="getTextareaProps()"></v-textarea>
                   </div>
                 </v-col>
                 <v-col cols="4">
@@ -115,7 +115,7 @@
                     <v-menu v-model="docs.productExpirationMenu" :close-on-content-click="false" :nudge-right="40"
                       transition="scale-transition" offset-y min-width="auto">
                       <template v-slot:activator="{ on, attrs }">
-                        <v-text-field append-icon="mdi-calendar" outlined dense readonly v-bind="attrs" v-on="on"
+                        <v-text-field append-icon="mdi-calendar" outlined dense readonly v-bind="{...attrs, ...getTextFieldProps()}" v-on="on"
                           v-on:click:append="
                             docs.productExpirationMenu = true
                             " v-model="docs.expiryDate" :placeholder="$t('memberDataSection.pOrder.selectDate')"
@@ -130,7 +130,7 @@
             </v-form>
           </v-col>
           <v-col cols="12" class="d-flex flex-row-reverse">
-            <v-btn type="button" color="primary" width="112" @click="scenerioPreviewBtn(true, 'One')">
+            <v-btn type="button" color="primary" width="112" @click="scenerioPreviewBtn(true, 'One')" v-bind="getButtonProps()">
               {{ $t("submit") }}
             </v-btn>
           </v-col>
@@ -143,7 +143,7 @@
              <v-form ref="riskAssessmentForm">
               <v-autocomplete :items="riskAssessmentStatusList" v-model="currentRiskAssessmentStatus" dense outlined class="wdt"
               item-text="text" item-value="val" :placeholder="$t('select')" ref="riskAssessmentStatusChange"
-              :rules="[(v) => !!v || this.$t('deforestation.riskAssessmentStatusIsRequired')]"
+              :rules="[(v) => !!v || this.$t('deforestation.riskAssessmentStatusIsRequired')]" v-bind="getSelectProps()"
               @change="handleRiskAssessmentStatus"></v-autocomplete>
             </v-form>
             <h2 class="mb-7">
@@ -267,19 +267,19 @@
                 <div class="d-flex align-center filter-section">
                   <div style="width: 290px; margin-top: 22px;">
                     <v-text-field prepend-inner-icon="mdi-magnify" outlined height="5px" :placeholder="$t('search')"
-                      dense v-model="search" @input="handleSearchByPharse" class="shrink" clearable></v-text-field>
+                      dense v-model="search" @input="handleSearchByPharse" class="shrink" clearable v-bind="getTextFieldProps()"></v-text-field>
                   </div>
                   <div class="ml-3" style="width: 290px;">
                     <label for="text">{{ $t("country") }}</label>
                     <v-select :items="countries" v-model="country" item-text="name" item-value="name" dense outlined
-                      class="wdt" :placeholder="$t('select')" @change="handleSearchByCountry"></v-select>
+                      class="wdt" :placeholder="$t('select')" @change="handleSearchByCountry" v-bind="getSelectProps()"></v-select>
                   </div>
 
                   <div class="ml-3" style="width: 290px;">
                     <label for="text">{{ $t("deforestation.supplier") }}</label>
                     <!-- {{JSON.stringify(formattedSupplier)}} -->
                     <v-select :items="formattedSupplier" v-model="suppplier" item-text="fullName" item-value="id" dense
-                      outlined class="wdt" :placeholder="$t('select')" @change="handleSearchBySupplier"></v-select>
+                      outlined class="wdt" :placeholder="$t('select')" @change="handleSearchBySupplier" v-bind="getSelectProps()"></v-select>
                   </div>
 
                   <div class="ml-3" style="width: 290px;">
@@ -288,7 +288,7 @@
                       }}</label>
                     <v-select :items="riskAssessmentStatusList" v-model="riskAssessmentStatus" dense outlined
                       class="wdt" item-text="text" item-value="val" :placeholder="$t('select')"
-                      @change="handleSearchByStatus"></v-select>
+                      @change="handleSearchByStatus" v-bind="getSelectProps()"></v-select>
                   </div>
                 </div>
 
@@ -299,13 +299,13 @@
                     {{ totalProductionPlaces }}
                   </div>
                   <v-btn class="mx-2" fab small outlined color="primary" :disabled="options.page <= 1"
-                    @click="pageChange(false)">
+                    @click="pageChange(false)" v-bind="getButtonProps()">
                     <v-icon dark>
                       mdi-chevron-left
                     </v-icon>
                   </v-btn>
                   <v-btn class="mx-2" fab small outlined color="primary" :disabled="options.page >= totalPages"
-                    @click="pageChange(true)">
+                    @click="pageChange(true)" v-bind="getButtonProps()">
                     <v-icon dark>
                       mdi-chevron-right
                     </v-icon>
@@ -338,7 +338,7 @@
                         <v-btn small rounded min-width="200" depressed :class="getRiskAssessmentStatus(
                           item?.diligenceReportProductionPlaceArray[0]?.all_risk_assessments?.[0]?.riskAssessmentStatus
                         ).class
-                          " height="34">
+                          " height="34" v-bind="getButtonProps()">
                           {{
                             getRiskAssessmentStatus(
                               item?.diligenceReportProductionPlaceArray[0]?.all_risk_assessments?.[0]?.riskAssessmentStatus
@@ -351,12 +351,12 @@
                       style="width: 34px; height: 34px; border-radius: 50%;"
                     /> -->
                       </div>
-                      <span v-else class="text-decoration-underline cursor-pointer" @click="addAssessment(item)">
+                      <span v-else class="text-decoration-underline cursor-pointer" @click="addAssessment(item)" v-bind="getButtonProps()">
                         {{ assessmentStatusTexts[item.id] || 'Loading...' }}
                       </span>
                       <v-spacer></v-spacer>
                       <v-icon style="cursor:pointer" class="ml-1 green-shadow"
-                        @click="farmRemoveConfirmDialog = true; deleteFarmId = item.farmId">mdi-trash-can</v-icon>
+                        @click="farmRemoveConfirmDialog = true; deleteFarmId = item.farmId" v-bind="getButtonProps()">mdi-trash-can</v-icon>
                     </div>
                   </td>
                 </tr>
@@ -630,7 +630,7 @@
                     }}</span>
                 </v-tooltip>
               </h2>
-              <v-btn v-if="!hideSurvey"  color="primary" @click="downloadAssessment()">{{ $t("dueDiligence.downloadAssessmentForm") }}
+              <v-btn v-if="!hideSurvey"  color="primary" @click="downloadAssessment()" v-bind="getButtonProps()">{{ $t("dueDiligence.downloadAssessmentForm") }}
               </v-btn>
             </div>
 
@@ -769,13 +769,13 @@
                     {{ totalProductionPlaces }}
                   </div>
                   <v-btn class="mx-2" fab small outlined color="primary" :disabled="options.page <= 1"
-                    @click="pageChange(false)">
+                    @click="pageChange(false)" v-bind="getButtonProps()">
                     <v-icon dark>
                       mdi-chevron-left
                     </v-icon>
                   </v-btn>
                   <v-btn class="mx-2" fab small outlined color="primary" :disabled="options.page >= totalPages"
-                    @click="pageChange(true)">
+                    @click="pageChange(true)" v-bind="getButtonProps()">
                     <v-icon dark>
                       mdi-chevron-right
                     </v-icon>
@@ -913,7 +913,7 @@
             </h3>
           </div>
           <div style="width:30%">
-            <v-textarea class="px-4" :rows="3" v-model="nonCompliantComment" :placeholder="$t('activationKey.comments')" @input="handleNonCompliantRiskMitigation" outlined></v-textarea>
+            <v-textarea class="px-4" :rows="3" v-model="nonCompliantComment" :placeholder="$t('activationKey.comments')" @input="handleNonCompliantRiskMitigation" outlined v-bind="getTextareaProps()"></v-textarea>
           </div>
           </v-row>  
 
@@ -976,7 +976,7 @@
                         }}</span>
                     </v-tooltip>
                   </h2>
-                  <v-btn v-if="!hideSurvey" color="primary" @click="downloadAssessment()">{{ $t("dueDiligence.downloadAssessmentForm") }}
+                  <v-btn v-if="!hideSurvey" color="primary" @click="downloadAssessment()" v-bind="getButtonProps()">{{ $t("dueDiligence.downloadAssessmentForm") }}
                   </v-btn>
                 </div>
                 <Survey v-if="!hideSurvey" :surveyee="survey" :surveyResponses="surveyResponses"
@@ -1113,13 +1113,13 @@
                     {{ totalProductionPlaces }}
                   </div>
                   <v-btn class="mx-2" fab small outlined color="primary" :disabled="options.page <= 1"
-                    @click="pageChange(false)">
+                    @click="pageChange(false)" v-bind="getButtonProps()">
                     <v-icon dark>
                       mdi-chevron-left
                     </v-icon>
                   </v-btn>
                   <v-btn class="mx-2" fab small outlined color="primary" :disabled="options.page >= totalPages"
-                    @click="pageChange(true)">
+                    @click="pageChange(true)" v-bind="getButtonProps()">
                     <v-icon dark>
                       mdi-chevron-right
                     </v-icon>
@@ -1254,7 +1254,7 @@
               </h3>
             </div>
             <div style="width:30%">
-              <v-textarea class="px-4" :rows="3" v-model="nonCompliantComment" :placeholder="$t('activationKey.comments')" @input="handleNonCompliantRiskMitigation" outlined></v-textarea>
+              <v-textarea class="px-4" :rows="3" v-model="nonCompliantComment" :placeholder="$t('activationKey.comments')" @input="handleNonCompliantRiskMitigation" outlined v-bind="getTextareaProps()"></v-textarea>
             </div>
           </v-row> 
         </v-col>
@@ -1317,7 +1317,7 @@
                         }}</span>
                     </v-tooltip>
                   </h2>
-                  <v-btn v-if="!hideSurvey" color="primary" @click="downloadAssessment()">{{ $t("dueDiligence.downloadAssessmentForm") }}
+                  <v-btn v-if="!hideSurvey" color="primary" @click="downloadAssessment()" v-bind="getButtonProps()">{{ $t("dueDiligence.downloadAssessmentForm") }}
                   </v-btn>
                 </div>
                 <Survey v-if="!hideSurvey" :surveyee="survey" :surveyResponses="surveyResponses"
@@ -2673,6 +2673,11 @@ export default {
           payload
         );
         if (res) {
+      await this.fetchAllSavedResponseForSurvey(
+        this.diligenceId,
+        this.assessmentId,
+        this.getCurrentUser.id
+      );
           if (this.isOneForEachFarm) {
             this.riskAssessmentStatus = "";
             this.getProductionPlaces();

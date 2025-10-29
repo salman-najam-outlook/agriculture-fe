@@ -1,12 +1,18 @@
 <template>
   <div>
-    <breadcrumb :items="breadcrumbs"></breadcrumb>
+    <breadcrumb :items="[{
+          text: isKenyaClient ? $t('approvalFlow.cooperative.unionAgents'):$t('approvalFlow.cooperative.cooperativeExporter'),
+          disabled: false,
+          exact: true,
+        }]"></breadcrumb>
     <v-container fluid>
       <div class="d-flex mb-4">
-        <h2>{{ $t("approvalFlow.cooperative.listOfCooperatives") }}/{{ $t("approvalFlow.cooperative.exporter") }}</h2>
+        <h2>
+          {{ isKenyaClient ? $t("approvalFlow.cooperative.unionAgents") : $t('approvalFlow.cooperative.cooperativeExporter') }}
+        </h2>
         <v-spacer></v-spacer>
         <v-btn color="primary" dark class="mr-2 mb-2" @click="handleCreateCooperative">
-          {{ $t("approvalFlow.cooperative.addCooperatives") }}
+           {{ isKenyaClient ? $t("approvalFlow.cooperative.addAgent") : $t("approvalFlow.cooperative.addCooperatives") }}
         </v-btn>
       </div>
       <v-card elevation="0" class="px-5 mt-7">
@@ -249,6 +255,7 @@ import moment from 'moment';
 import RoleMixin from "@/mixins/RoleMixin";
 import { mapGetters } from "vuex";
 import ApprovalFlowService from "@/_services/ApprovalFlowService";
+import { isKenyaClient } from "@/utils";
 
 export default {
   components: {
@@ -264,6 +271,9 @@ export default {
   },
   computed: {
     ...mapGetters("eudrSettings", ["get_EUDR_Settings"]),
+    isKenyaClient() {
+      return isKenyaClient();
+    },
     isOwner() {
       return this.getCurrentRoles.some(x => ["operator_owner", "supplier_owner"].includes(x))
     },
@@ -280,6 +290,14 @@ export default {
     eudrSettings() {
       return this.get_EUDR_Settings;
     },
+    headers(){
+      return this.isKenyaClient ? this.headersr.map(header => {
+        if (header.value === 'cooperative') {
+          return { ...header, text: this.$t('approvalFlow.cooperative.unionAgents') };
+        }
+        return header;
+      }) : this.headersr;
+    }
   },
   data() {
     return {
@@ -296,7 +314,7 @@ export default {
         limit: 10,
         page: 1,
       },
-      headers: [
+      headersr: [
         {
           text: this.$t("approvalFlow.cooperative.cooperative"),
           align: "start",
@@ -357,13 +375,6 @@ export default {
         this.$t("approvalFlow.cooperative.actions"),
       ],
       menu: false,
-      breadcrumbs: [
-        {
-          text: this.$t("approvalFlow.cooperative.cooperative") + '/' + this.$t("approvalFlow.cooperative.exporter"),
-          disabled: false,
-          exact: true,
-        }
-      ],
       cooperatives: [],
       totalCooperatives: 0,
       totalCooperativePages: 0,

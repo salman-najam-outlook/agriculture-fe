@@ -20,7 +20,6 @@ export default {
     },
 
     checkRole(role) {
-        // const user = JSON.parse(localStorage.getItem("user"));
         const user = store.getters.getUser;
         let hasRole = false;
 

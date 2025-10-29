@@ -41,14 +41,12 @@ export default {
             state.modules = payLoad.sideBarMenu;
             state.moduleAndPermissions = payLoad?.moduleAndPermissions || [];
             state.authenticated = true
-            //salman
             // localStorage.setItem('moduleAndPermissions', JSON.stringify(payLoad?.moduleAndPermissions || []));
             // localStorage.setItem('user', JSON.stringify(payLoad));
             // localStorage.setItem('token', payLoad.token);
             // localStorage.setItem('refreshtoken', payLoad.refreshtoken);
             // localStorage.setItem('modules', JSON.stringify(payLoad.sideBarMenu));
             // axiosConfig.headers.authorization = payLoad.token;
-            //salman
             // DISPATCH TO EUDR MODULE
             const matchedRole = payLoad.user_role_assoc.find(role=>
                 ['supplier', 'supplier_owner', 'operator', 'operator_owner'].includes(role.id)
@@ -60,12 +58,10 @@ export default {
             state.token = null;
             state.refreshtoken = null;
             state.modules = [];
-            //salman
             // localStorage.removeItem("user");
             // localStorage.removeItem("token");
             // localStorage.removeItem("refreshtoken");        
             // localStorage.removeItem("modules");
-             //salman
             axiosConfig.headers.authorization = null;
             state.authenticated = false;
         },
@@ -75,7 +71,6 @@ export default {
         setTempToken(state, token) {
             state.tempToken = token;
         },
-        //salman
         // setAuthToken(state, token) {
         //     localStorage.setItem('token', token);
         //     axiosConfig.headers.authorization = token;
@@ -85,30 +80,23 @@ export default {
         //     localStorage.setItem('refreshtoken',token);
         //     state.refreshtoken = token;
         // },
-        //salman
         setModulePermittedActions (state, data) {
             state.modulePermittedActions = data
         }
     },
     actions: authActions,
     getters: {
-        //salman
         // getAuthToken(state) {
         //     return state.token;
         // },
-        //salman
         getTempToken(state) {
             return state.tempToken;
         },
-        //salman
         // getRefreshToken(state){
         //     return state.refreshtoken;
         // },
-        //salman
         async isAuthenticated(state) {
-            //salman
              return state.authenticated;
-             //salman
         },
         getUser: (state) => state.user,
         getPermissions: (state) => state.modules,
@@ -160,8 +148,6 @@ export default {
     }
 };
 
-//salman
 function getInitialAuthState() {
   return localStorage.getItem('isAuthenticated') === 'true';
 }
-//salman

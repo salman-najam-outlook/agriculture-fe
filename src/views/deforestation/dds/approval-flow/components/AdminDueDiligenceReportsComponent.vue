@@ -2049,13 +2049,16 @@ export default {
 
     async fetchExporterList() {
       try {
-        const response = await UserListService.getExporterList();
+        // Use UserListService.getExporters() method
+        const response = await UserListService.getExporters();
+        
         const data = response?.data?.rows || [];
         
         if (data && Array.isArray(data)) {
           this.exporterOptions = data
             .filter(user => user && user.id) // Filter out users with null/undefined IDs
             .map(user => {
+              // Use fullName from the new API response structure
               const name = user.fullName || `${user.firstName || ''} ${user.lastName || ''}`.trim();
               return {
                 name: name,

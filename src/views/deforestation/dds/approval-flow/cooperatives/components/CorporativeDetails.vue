@@ -35,7 +35,7 @@
                 <div class="details-grid">
                     <div class="detail-item">
                         <div class="detail-label">
-                            <span class="label-text">{{ $t('approvalFlow.cooperative.cooperativeName') }}</span>
+                            <span class="label-text">{{ isKenyaClient ?$t('approvalFlow.cooperative.agentUnionName') :  $t('approvalFlow.cooperative.cooperativeName') }}</span>
                             <v-tooltip top color="00BD73" max-width="350">
                                 <template v-slot:activator="{ on, attrs }">
                                     <v-icon size="16" class="icon-with-background primary--text" style="color:#0EBF67"
@@ -67,7 +67,7 @@
 
                     <div class="detail-item">
                         <div class="detail-label">
-                            <span class="label-text">{{ $t('approvalFlow.cooperative.commoditiesProducts') }}</span>
+                            <span class="label-text">{{ isKenyaClient ? $t('approvalFlow.cooperative.agentUnionDetails'):$t('approvalFlow.cooperative.commoditiesProducts') }}</span>
                             <v-tooltip top color="00BD73" max-width="350">
                                 <template v-slot:activator="{ on, attrs }">
                                     <v-icon size="16" class="icon-with-background primary--text" style="color:#0EBF67"
@@ -100,14 +100,14 @@
 
                     <div class="detail-item">
                         <div class="detail-label">
-                            <span class="label-text">{{ $t('approvalFlow.cooperative.cooperativeEmail') }}</span>
+                            <span class="label-text">{{ isKenyaClient ?  $t('approvalFlow.cooperative.agentUnionEmail') : $t('approvalFlow.cooperative.cooperativeEmail') }}</span>
                         </div>
                         <div class="detail-value">{{ cooperative.email || 'N/A' }}</div>
                     </div>
 
                     <div class="detail-item">
                         <div class="detail-label">
-                            <span class="label-text">{{ $t('approvalFlow.cooperative.cooperativePhoneNumber') }}</span>
+                            <span class="label-text">{{ isKenyaClient ?$t('approvalFlow.cooperative.agentUnionPhoneNumber') :$t('approvalFlow.cooperative.cooperativePhoneNumber') }}</span>
                         </div>
                         <div class="detail-value">{{ cooperative.mobile || 'N/A' }}</div>
                     </div>
@@ -370,6 +370,7 @@ import Shipments from '../../components/Shipments.vue';
 import AddCooprateDialog from './AddCooprateDialog.vue';
 import ApprovalFlowService from '@/_services/ApprovalFlowService';
 import loadingMixin from "@/mixins/LoadingMixin"
+import { isKenyaClient } from "@/utils";
 
 export default {
     name: 'CorporativeDetails',
@@ -419,6 +420,9 @@ export default {
             const idFromPath = viewIndex !== -1 && pathSegments[viewIndex + 1] ? pathSegments[viewIndex + 1] : null;
             
             return this.id || this.$route.params.id || idFromPath;
+        },
+        isKenyaClient() {
+            return isKenyaClient();
         }
     },
     methods: {

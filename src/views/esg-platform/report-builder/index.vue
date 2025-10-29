@@ -31,53 +31,16 @@ export default {
     },
     data() {
         return {
-            esgReports: [
-                {
-                    reportId: 'ESG-001',
-                    templateName: 'Deforestation Template',
-                    access: 'Public',
-                    dateGenerated: '2024-06-10',
-                    status: 'Saved',
-                },
-                {
-                    reportId: 'ESG-002',
-                    templateName: 'Water Usage Template',
-                    access: 'Private',
-                    dateGenerated: '2024-06-12',
-                    status: 'Publishing to Blockchain',
-                },
-                {
-                    reportId: 'ESG-003',
-                    templateName: 'Emission Template',
-                    access: 'Public',
-                    dateGenerated: '2024-06-15',
-                    status: 'Published to Blockchain',
-                },
-                {
-                    reportId: 'ESG-004',
-                    templateName: 'Emission Template',
-                    access: 'Public',
-                    dateGenerated: '2024-06-15',
-                    status: 'Published to Blockchain',
-                },
-                {
-                    reportId: 'ESG-005',
-                    templateName: 'Emission Template',
-                    access: 'Public',
-                    dateGenerated: '2024-06-15',
-                    status: 'Published to Blockchain',
-                },
-            ],
-            
+            esgReports: [],
             breadcrumbs: [
                 {
-                    text: this.$t("ESG Compliance"),
+                    text: this.$t("ESG Platform"),
                     disabled: false,
-                    to: { name: "Users" },
+                    to: { name: "esg-dashboard" },
                     exact: true,
                 },
                 {
-                    text: this.$t("dashboard"),
+                    text: this.$t("ESG Report Builder"),
                     disabled: true,
                     href: "breadcrumbs_link_1",
                 },

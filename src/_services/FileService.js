@@ -21,16 +21,12 @@ export default {
             return Promise.reject(error.response);
         })
     },
-    //salman
     async sendFile(endpoint, data, progressFunc) { // const token = localStorage.getItem('token')
-         //salman
         const progressConfig = {
             onUploadProgress: progressFunc ?? (() => {}),
-            //salman
             // headers: {
             //     'oauth-token': token
             // }
-            //salman
         };
 
         return await axios.post(`${apiUrl}/${endpoint}`, data, progressConfig).then(({data}) => data).catch(error => Promise.reject(error));
@@ -44,13 +40,11 @@ export default {
                 isPublic,
                 directory: directoryName
             },
-            //salman
             // {
             //     headers: {
             //         'oauth-token': token
             //     }
             // }
-            //salman
         ).then(({data}) => data).catch(error => Promise.reject(error));
     },
 
@@ -58,14 +52,10 @@ export default {
         return await axios.post(`${apiUrl}/media/url`, {
             key,
             isPublic,
-        }, 
-        //salman
-        // {
-        //     headers: {
-        //         'oauth-token': localStorage.getItem('token'),
-        //     },
-        // }
-        //salman
-    ).then(({ data }) => data).catch(error => Promise.reject(error));
+        }, {
+            // headers: {
+            //     'oauth-token': localStorage.getItem('token'),
+            // },
+        }).then(({ data }) => data).catch(error => Promise.reject(error));
     }
 }

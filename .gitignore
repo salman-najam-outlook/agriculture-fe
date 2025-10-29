@@ -1,20 +1,7 @@
 .DS_Store
 node_modules
 /dist
-helm-chart
-public
-tests
-sonar-project.properties
-vue.config.js
-skaffold.yaml
-README.md
-jest.config.js
-Dockerfile
-babel.config.js
-.eslintrc.js
-.browserslistrc
-atuq
-src/views/deforestation/supplierModule/reports/components/eudr/DisputesDialog.vue
+
 
 # local env files
 .env

@@ -104,11 +104,6 @@ import EsgService from '../../../../../_services/EsgService';
 export default {
     name: 'TemplateGrid',
     props: {
-        loading: {
-            type: Boolean,
-            default: false
-        },
-
         featuresLabel: {
             type: String,
             default: 'Features'
@@ -148,7 +143,7 @@ export default {
                     color: 'primary',
                     class: ' mr-2 font-weight-bold ',
                     icon: 'mdi-eye',
-                    redirectURL: '/esg-platform/report-builder/preview-template'
+                    redirectURL: '/esg-platform/create-new-esg-template'
                 },
                 {
                     name: 'edit',
@@ -158,7 +153,7 @@ export default {
                     color: 'primary',
                     class: ' font-weight-bold',
                     icon: 'mdi-pencil',
-                    redirectURL: '/esg-platform/report-builder/edit-template'
+                    redirectURL: '/esg-platform/create-new-esg-template'
                 }
             ]
         },
@@ -188,10 +183,19 @@ export default {
         }
     },
     async created() {
-        const { data } = await EsgService.getEsgReportTemplates();
-        this.allTemplates = data;
-        this.usedTemplates = this.allTemplates;
-        this.initializeData();
+        try {
+            const { data } = await EsgService.getEsgReportTemplates();
+            this.allTemplates = data;
+            this.usedTemplates = this.allTemplates;
+            this.initializeData();
+        } catch (e) {
+            this.$notify({
+                type: "error",
+                text: "Failed to load templates"
+            });
+        } finally {
+            this.loading = false;
+        }
     },
     data() {
         return {
@@ -205,6 +209,7 @@ export default {
                 status: "",
                 orderType: "DESC"
             },
+            loading: true,
             allTemplates: [],
             usedTemplates: [],
             paginatedTemplates: [],
@@ -230,7 +235,10 @@ export default {
         },
         handleAction(action, template) {
             if (action.redirectURL) {
-                this.$router.push(action.redirectURL);
+                let url = `${action.redirectURL}?templateId=${template._id}`;
+                url = action.name === 'preview' ? `${url}&preview=1`: url;
+
+                this.$router.push(url);
             } else {
                 this.$emit(action.event, template);
             }

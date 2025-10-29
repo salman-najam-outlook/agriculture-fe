@@ -246,11 +246,9 @@ export default {
             addRemoveLinks: true,
             autoProcessQueue: true,
             paramName: 'treesFile',
-            //salman
-            // headers: {
-            //   'oauth-token': this.$store.getters.getAuthToken,
-            // }
-            //salman
+           // headers: {
+          //   'oauth-token': this.$store.getters.getAuthToken,
+          // }
           },
       awss3: {
         signingURL: 'https://dimitra-public-images.s3.amazonaws.com/oma',

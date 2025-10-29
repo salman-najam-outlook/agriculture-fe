@@ -100,9 +100,15 @@ export default {
   methods: {
     async getAssessmentQuestions() {
       try {
-        const response = await ESGService.getAllAssessments();
+        // Use getAssessments with pagination parameters to get all data
+        const response = await ESGService.getAssessments({
+          page: 1,
+          limit: 1000 // Set a high limit to get all assessments
+        });
         if (response.success) {
-          this.existingSurvey = response.data.map(assessment => ({
+          // Fix: Access response.data.info instead of response.data directly
+          const assessments = response.data.info || response.data || [];
+          this.existingSurvey = assessments.map(assessment => ({
             text: assessment.title,
             value: assessment._id,
             questionCount: assessment.noOfQuestions || 0

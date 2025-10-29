@@ -330,4 +330,18 @@ export default {
         .then(result => result.data)
         .catch( error => Promise.reject(error));
     },
+
+    async getAllPasswordHistoriesByUserId(userId) {
+        return await axios.get(`/app-user/${userId}/password-histories`, {
+            baseURL: process.env.VUE_APP_BASE_URL || 'https://sass-api-pre-prod.dimitra.dev/api/admin',
+        }).then(response => response.data)
+        .catch( error => Promise.reject(error));
+    },
+
+    async updateUserPassword(userId, password) {
+        return await axios.post(`/app-user/${userId}/create-password`, { password }, {
+            baseURL: process.env.VUE_APP_BASE_URL || 'https://sass-api-pre-prod.dimitra.dev/api/admin',
+        }).then(response => response.data)
+        .catch( error => Promise.reject(error));
+    }
 }

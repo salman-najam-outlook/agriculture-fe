@@ -18,4 +18,13 @@ export default {
       .then(({ data }) => data)
       .catch(({ response }) => Promise.reject(response));
   },
+
+  async getExporters() {
+    return axios
+      .get("/exporters", {
+        baseURL: process.env.VUE_APP_BASE_URL,
+      })
+      .then(({ data }) => data)
+      .catch(({ response }) => Promise.reject(response));
+  },
 };

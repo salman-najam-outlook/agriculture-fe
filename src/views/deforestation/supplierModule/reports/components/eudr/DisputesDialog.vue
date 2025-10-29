@@ -234,7 +234,7 @@ export default {
       // this.startLoading();
       // this.stopLoading();
       this.loader = await new Loader({
-        apiKey: "",
+        apiKey: "AIzaSyBxEppGyQ3YatmT9C8RJjXAh9HsVtpKLh4",
         libraries: ["places", "map", "geometry"],
       })
         .load()
@@ -246,6 +246,52 @@ export default {
         });
       this.createPolygon();
       this.createMarker();
+
+      // DeforestationService.getComplianceDetails(
+      //     this.complianceId,
+      //     this.$store.getters.getAuthToken
+      // )
+      //     .then(async (res) => {
+      //     this.complianceDetails = res.data.deforestation;
+      //     this.setHeader3Data(res.data.deforestation.totalArea)
+      //     this.totalGeofenceArea = res.data.deforestation.totalArea
+      //     this.probabilityLists = this.generateProbabilityList()
+      //     this.mapOptions.center.lat = Number.parseFloat(
+      //         res.data.deforestation.centerLatitude
+      //     );
+      //     this.mapOptions.center.lng = Number.parseFloat(
+      //         res.data.deforestation.centerLongitude
+      //     );
+      //     this.complianceDetails.coordinates = res.data.deforestation.coordinates.map(
+      //         (x) => {
+      //         return {
+      //             lat: x.latitude,
+      //             lng: x.longitude,
+      //         };
+      //         }
+      //     );
+      //     this.polygonCoords = this.complianceDthis.map = await new google.maps.Map(mapContainer, this.mapOptions);etails.coordinates;
+      //     if(this.filterDeforestImage){
+      //         const data = await this.proxyImage(this.filterDeforestImage);
+      //         this.deforestImage = "data:image/jpeg;base64," + data.data;
+      //     }
+      //     // this.stopLoading();
+      //     // this.loader = await new Loader({
+      //     //     apiKey: "AIzaSyBxEppGyQ3YatmT9C8RJjXAh9HsVtpKLh4",
+      //     //     libraries: ["places", "map", "geometry"],
+      //     // })
+      //     //     .load()
+      //     //     .then(async (google) => {
+      //     //     await this.initializeMap(google);
+      //     //     })
+      //     //     .catch((e) => {
+      //     //     console.log("Map", e);
+      //     //     });
+      //     })
+      //     .catch((error) => {
+      //     this.stopLoading();
+      //     console.error(error);
+      //     });
     },
     closeModal() {
       this.$emit("closeBulkUpload");

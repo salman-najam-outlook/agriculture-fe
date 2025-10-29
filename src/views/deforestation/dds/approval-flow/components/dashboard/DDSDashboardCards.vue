@@ -157,7 +157,7 @@
         </v-col>
 
         <!-- DDS Approved -->
-        <v-col cols="12" sm="6" lg="4" class="dashboard-card-col" v-if="!isWorker">
+        <v-col cols="12" sm="6" lg="4" class="dashboard-card-col">
           <DDSCard
             :title="$t('dueDiligence.ddsApproved')"
             :value="statisticsData.ddsApproved"
@@ -518,8 +518,8 @@ export default {
        this.$emit('filters-reset');
      },
     parseTrendValue(changeValue) {
-      // Hide trends when filterType is 'all'
-      if (this.selectedPeriod === 'all') return null;
+      // Allow trends to be shown for all periods, including 'all'
+      // The backend should provide meaningful trend data for all filter types
       
       if (!changeValue) return null;
       // If it's already a number, return it

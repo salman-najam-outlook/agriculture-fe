@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-data-table :headers="headers" :items="visibleReports" hide-default-footer :server-items-length="totalReports"
-            @item-selected="handleSelect" @toggle-select-all="handleSelectAll">
+            @item-selected="handleSelect" @toggle-select-all="handleSelectAll" :loading-text="$t('loadingData')" :loading="reportsLoading">
             <template v-slot:top="{ }">
                 <!-- title  -->
                 <h3 class="text-h6 mb-4">
@@ -183,6 +183,7 @@ export default {
             visibleReports: [],
             allReports: [],
             usableReports: [],
+            reportsLoading: true,
             totalReports: 0,
             itemsPerPage: 0,
             itemsPerPageOptions: [10, 25, 50, 75, 100],
@@ -252,10 +253,19 @@ export default {
         };
     },
     async created() {
-        const { data } = await EsgService.getEsgReports();
-        this.allReports = data;
-        this.usableReports = this.allReports;
-        this.initializeData();
+        try {
+            const { data } = await EsgService.getEsgReports();
+            this.allReports = data.reverse();
+            this.usableReports = this.allReports;
+            this.initializeData();
+        } catch(e) {
+            this.$notify({
+                type: "error",
+                text: "Failed to load ESG Reports"
+            });
+        } finally {
+            this.reportsLoading = false;
+        }
     },
     methods: {
         initializeData() {

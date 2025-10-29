@@ -87,7 +87,8 @@
                 <v-switch inset class="v-input--reverse v-input--expand"
                     @change="updateGeolocationPrivacy"
                     v-model="isGeolocationPrivate"
-                    persistent-hint>
+                    persistent-hint
+                    v-bind="getCheckboxProps()">
                     <template #label>
                     {{$t('deforestation.privacyEnabled')}}
                     </template>
@@ -110,20 +111,20 @@
                 <v-row>
                   <v-col cols="4">
                     <label>{{ $t('dueDiligence.netMassKG') }}</label>
-                    <v-text-field outlined height="5px" :placeholder="$t('dueDiligence.netMassKG')" disabled dense
-                        v-model="netMass" class="shrink" :loading="!netMass" :suffix="eudrSettings.product_mass_unit">
+                    <v-text-field height="5px" :placeholder="$t('dueDiligence.netMassKG')" disabled dense
+                        v-model="netMass" class="shrink" :loading="!netMass" :suffix="eudrSettings.product_mass_unit" v-bind="getTextFieldProps()">
                     </v-text-field>
                   </v-col>
                   <v-col cols="4">
                     <label>{{ $t('dueDiligence.volumeM') }}</label>
-                    <v-text-field outlined height="5px" :placeholder="$t('dueDiligence.volumeM')" disabled dense v-model="netVolume" :loading="!netVolume" :suffix="eudrSettings.volume_unit"
-                         class="shrink">
+                    <v-text-field height="5px" :placeholder="$t('dueDiligence.volumeM')" disabled dense v-model="netVolume" :loading="!netVolume" :suffix="eudrSettings.volume_unit"
+                         class="shrink" v-bind="getTextFieldProps()">
                     </v-text-field>
                   </v-col>
                   <v-col cols="4">
                     <label>{{ $t('dueDiligence.areaInHA') }}</label>
-                     <v-text-field outlined height="5px" :placeholder="$t('dueDiligence.areaInHA')" disabled dense v-model="netArea" :loading="!netArea" suffix="ha"
-                        class="shrink">
+                     <v-text-field height="5px" :placeholder="$t('dueDiligence.areaInHA')" disabled dense v-model="netArea" :loading="!netArea" suffix="ha"
+                        class="shrink" v-bind="getTextFieldProps()">
                     </v-text-field>
                   </v-col> 
                 </v-row>
@@ -149,14 +150,14 @@
                             <div class="d-flex justify-space-between filter-pro-places">
                                 <div class="d-flex align-center">
                                         <label for="text">&nbsp;</label>
-                                        <v-text-field prepend-inner-icon="mdi-magnify" outlined height="5px"
+                                        <v-text-field prepend-inner-icon="mdi-magnify" height="5px"
                                         :placeholder="$t('search')"  dense v-model="search" @input="filterProductionPlaces"
-                                        class="shrink">
+                                        class="shrink" v-bind="getTextFieldProps()">
                                     </v-text-field>
 
                                         <v-autocomplete v-model="countryModel" item-text="name" item-value="name"
                                         :items="pcountries" class="mx-2" :label="$t('deforestation.allCountries')" @change="filterProductionPlaces"
-                                        outlined dense>
+                                        dense v-bind="getSelectProps()">
                                     </v-autocomplete>
 
 
@@ -175,24 +176,24 @@
                                         {{ from }} - {{ to }} of {{ totalProductionPlaces }}
                                     </div>
                                     <v-btn class="mx-2" fab small outlined color="primary" :disabled="options.page <= 1"
-                                        @click="pageChange(false)">
+                                        @click="pageChange(false)" v-bind="getButtonProps()">
                                         <v-icon dark>
                                             mdi-chevron-left
                                         </v-icon>
                                     </v-btn>
                                     <v-btn class="mx-2" fab small outlined color="primary"
-                                        :disabled="options.page >= totalPages" @click="pageChange(true)">
+                                        :disabled="options.page >= totalPages" @click="pageChange(true)" v-bind="getButtonProps()">
                                         <v-icon dark>
                                             mdi-chevron-right
                                         </v-icon>
                                     </v-btn>
 
-                                    <v-btn class="mx-2" @click="exportToPDF" fab small outlined color="primary">
+                                    <v-btn class="mx-2" @click="exportToPDF" fab small outlined color="primary" v-bind="getButtonProps()">
                                             <v-icon dark>
                                                 mdi-tray-arrow-down
                                             </v-icon>
                                 </v-btn>
-                                <v-btn class="mx-2" v-if="productionPlaceCheckbox.length > 0" @click="deleteSelectedProductionPlace" fab small outlined color="primary">
+                                <v-btn class="mx-2" v-if="productionPlaceCheckbox.length > 0" @click="deleteSelectedProductionPlace" fab small outlined color="primary" v-bind="getButtonProps()">
                                     <v-icon dark>
                                         mdi-delete
                                     </v-icon>
@@ -229,6 +230,7 @@
                                     <td class="text-truncate">
                                         <v-checkbox
                                             @change="updateProductionPlaceCheckbox(item.id)"
+                                            v-bind="getCheckboxProps()"
                                         ></v-checkbox>
                                     </td>
                                     <td class="text-truncate">
@@ -250,7 +252,7 @@
                                     </td>
 
                                     <td class="text-truncate">
-                                        {{ item.farm.area ? parseFloat(item.farm.area).toFixed(5) : '' }}
+                                        {{ item.farm.area ? parseFloat(item.farm.area * 0.404686).toFixed(5) : '' }}
                                     </td>
 
                                     <td class="text-truncate">
@@ -258,17 +260,17 @@
                                     </td>
                                     <td class="d-flex justify-center align-center ga-3">
                                         <div v-if="shouldShowEditButton(item)">
-                                            <a @click="editGeofenceMap(item)" class="text-decoration-underline">{{
+                                            <a @click="editGeofenceMap(item)" class="text-decoration-underline" v-bind="getButtonProps()">{{
                                                 $t('deforestation.editGeofence') }}</a>
                                                                 </div>
                                         <div v-else>
-                                            <a @click="viewGeofenceMap(item)" class="text-decoration-underline">{{
+                                            <a @click="viewGeofenceMap(item)" class="text-decoration-underline" v-bind="getButtonProps()">{{
                                                 $t('deforestation.viewGeolocation') }}
                                             </a>
                                         </div>
                                         <v-tooltip bottom>
                                             <template v-slot:activator="{ on, attrs }">
-                                                <v-btn x-small fab v-bind="attrs" v-on="on" color="primary"
+                                                <v-btn x-small fab v-bind="{...attrs, ...getButtonProps()}" v-on="on" color="primary"
                                                     @click="comfirmItemDelete(item)" style="margin-left: 20px;">
                                                     <v-icon style="color: white !important;">mdi-delete</v-icon>
                                                 </v-btn>

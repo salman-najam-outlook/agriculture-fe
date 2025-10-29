@@ -3,7 +3,8 @@ import axios from "axios";
 import router from "../router";
 
 const DEFORESTATION_BASE_URL =
-  "http://localhost:4044/graphql"
+  process.env.VUE_APP_DEFORESTATION_BASE_URL ||
+  "https://cf-deforestation.dimitra.dev/graphql";
 // const DEFORESTRATION_API_BASE_URL =
 //   process.env.VUE_APP_DEFORESTRATION_API_BASE_URL ||
 //   "https://cf-deforestation.dimitra.dev/api";
@@ -50,7 +51,7 @@ async function callPostAPI(query, variables){
 
 async function postGraphqlQuery(query, variables, retry = true) {
   try {
-    console.log("variables", variables)   
+    console.log("variables", variables)    
     const result = await axiosInstance.post(
       DEFORESTATION_BASE_URL,
       {
@@ -84,7 +85,7 @@ async function postGraphqlQuery(query, variables, retry = true) {
 
       userMessage = "Something went wrong on the server. Please try again later.";
     }
-    if (error.response?.data?.errors?.length && error.response?.data?.errors[0].statusCode === 401 ) {
+    if (error.response?.data?.errors?.length && error.response?.data?.errors[0].statusCode === 401) {
       try{
         await store.dispatch('refreshToken');
         // console.log( error.response);
@@ -93,7 +94,7 @@ async function postGraphqlQuery(query, variables, retry = true) {
       }catch(err){
         // console.log('rf', err);
         await store.dispatch('logout');
-        // router.push('/login')
+        router.push('/login')
       }
     }
 

@@ -6,12 +6,13 @@
         :enableRiskAssessmentCriteria="enableRiskAssessmentCriteria"
         :diligenceId="diligenceId"
         :disregardSegmentData="disregardSegmentData"
+        :readonly="isReadonlyMode"
         @update-enable-criteria="updateEnableCriteria"
         @update-enable-protected="updateEnableProtected"
       />
     </div>
     <div v-if="enableProtectedAndIndigenousAreas && (countryOfActivity && countryOfActivity.length > 0)" >
-      <IndigenousAndProtectedAreas :diligenceId="diligenceId" :countryOfActivity="countryOfActivity"  />
+      <IndigenousAndProtectedAreas :diligenceId="diligenceId" :countryOfActivity="countryOfActivity" :readonly="isReadonlyMode" />
     </div>
   </div>
 </template>
@@ -84,6 +85,7 @@ export default {
       }
     },
     async updateEnableCriteria(value) {
+      if (this.isReadonlyMode) return;
       this.enableRiskAssessmentCriteria = value;
       this.disregardSegmentData[0].enableRiskAssessmentCriteria = value;
       
@@ -103,6 +105,7 @@ export default {
       }
     },
     async updateEnableProtected(value) {
+      if (this.isReadonlyMode) return;
       this.enableProtectedAndIndigenousAreas = value;
       this.disregardSegmentData[1].enableProtectedAndIndigenousAreas = value;
       

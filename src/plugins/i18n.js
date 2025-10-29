@@ -7,6 +7,12 @@ import itmain from './languages/it/main'
 import swmain from './languages/sw/main'
 import idmain from './languages/id/main'
 import nlmain from './languages/nl/main'
+import himain from './languages/hi/main'
+import vimain from './languages/vi/main'
+import ammain from './languages/am/main'
+import armain from './languages/ar/main'
+import elmain from './languages/el/main'
+import trmain from './languages/tr/main'
 import hi from './languages/hi'
 import mr from './languages/mr'
 import ne from './languages/ne'
@@ -22,18 +28,18 @@ Vue.use(VueI18n);
 
 const messages = {
     'en': { ...enmain, $vuetify: _en },
-    'hi': hi,
+    'hi': { ...himain, ...hi },
     'mr': mr,
-    'vi': vi,
+    'vi': { ...vimain, ...vi },
     'es': { ...esmain, $vuetify: _es },
     'ne': ne,
     'id': { ...idmain, $vuetify: _id },
     'pt': { ...ptmain, $vuetify: _pt },
-    'el': { ...el, $vuetify: _el },
-    'tr': { ...tr, $vuetify: _tr },
+    'el': { ...elmain, ...el, $vuetify: _el },
+    'tr': { ...trmain, ...tr, $vuetify: _tr },
     'sw': swmain,
-    'ar': { ...ar, $vuetify: _ar },
-    'am': am,
+    'ar': { ...armain, ...ar, $vuetify: _ar },
+    'am': { ...ammain, ...am },
     'nl': { ...nlmain, $vuetify: _nl },
     'fr': { ...frmain, $vuetify: _fr },
     'it': { ...itmain, $vuetify: _it }

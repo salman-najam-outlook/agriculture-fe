@@ -1401,6 +1401,7 @@ export default {
     approvalConfirmationMessage: "Apakah Anda yakin ingin menyetujui laporan DDS yang dipilih?",
     approvalOnceApprovedTitle: "Setelah disetujui",
     approvalVerifiedByPtsi: "Setiap laporan akan ditandai sebagai terverifikasi oleh PTSI.",
+    approvalVerifiedByAgent: "Setiap laporan akan ditandai sebagai terverifikasi oleh NACCU.",
     approvalConfirmationMessageShipment: "Are you sure you want to approve the selected shipments?",
     approvalVerifiedByShipment: "Setiap pengiriman akan ditandai sebagai disetujui",
     allAssociatedReportsWillBeApprovedShipment: "Semua laporan terkait akan disetujui",

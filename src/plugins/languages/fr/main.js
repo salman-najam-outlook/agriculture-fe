@@ -16,6 +16,7 @@ import approvalFlow from './approval-flow'
 
 import { fr } from "vuetify/lib/locale";
 import carbonCredit from './carbonCredit'
+import updatePassword from './update-password';
 
 export default {
     $vuetify: { ...fr },
@@ -34,6 +35,7 @@ export default {
     ...blends,
     ...regionalRiskAssessment,
     ...carbonCredit,
-    ...approvalFlow
+    ...approvalFlow,
+    ...updatePassword,
 }
 

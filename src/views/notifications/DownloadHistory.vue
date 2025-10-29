@@ -254,19 +254,15 @@ export default {
             const { pdfType, dueDiligenceReportId, id: pdfHistoryId } = item;
             this.startLoading();
 
-            //salman
-            // const token = this.$store.state.auth.token;
-            //salman
+            //const token = this.$store.state.auth.token;
             const fileUrl = `${process.env.VUE_APP_DEFORESTRATION_REPORTING_API_BASE_URL}/diligence-report/final-report-pdf/${dueDiligenceReportId}/${pdfType}`;
             const retryUrl = `${fileUrl}?retry=true&pdfHistoryId=${pdfHistoryId || ''}`;
             axios
                 .get(retryUrl, {
-                    //salman
-                    // headers: {
-                    //     'oauth-token': token,
-                    //     'Content-Type': 'application/json',
-                    // },
-                    //salman
+                    headers: {
+                       //  'oauth-token': token,
+                      //   'Content-Type': 'application/json',
+                    },
                 })
                 .then(response => {
                     localStorage.removeItem('downloadPdfAlert');

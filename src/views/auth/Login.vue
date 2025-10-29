@@ -18,8 +18,8 @@
 						</h2> -->
 					</div>
 					<div class="flex-direction-box">
-					<!-- Regular Login Form (shown when MFA not required) -->
 					<div class="login-from vertical-center" v-if="!mfaRequired">
+
 						<h2>{{ $t('login.welcomeMsg') }}</h2>
 						<!-- <h2>Welcome! Log In</h2> -->
 						<p class="gray--text">{{ $t('login.info') }}</p>
@@ -77,7 +77,7 @@
 								<v-alert v-if="otpError" type="error" dense class="mb-4">
 									{{ otpError }}
 								</v-alert>
-								
+
 								<!-- OTP Input -->
 								<div class="form-group">
 									<label>Enter Verification Code</label>
@@ -96,7 +96,7 @@
 										Enter the 6-digit code sent to your {{ mfaMethodLabel }}
 									</p>
 								</div>
-								
+
 								<!-- Submit Button -->
 								<div>
 									<v-btn 
@@ -110,7 +110,7 @@
 										Verify & Sign In
 									</v-btn>
 								</div>
-								
+
 								<!-- Resend Code Button -->
 								<div class="text-center mt-4">
 									<v-btn 
@@ -128,7 +128,7 @@
 										</template>
 									</v-btn>
 								</div>
-								
+
 								<!-- Back to Login -->
 								<div class="text-center mt-2">
 									<v-btn 
@@ -144,6 +144,7 @@
 							</div>
 						</form>
 					</div>
+
 				</div>
 				</div>
 			</v-col>
@@ -201,7 +202,6 @@ import { ALL_PTSI_ROLES } from '../../constants/roles';
 		authErr: '',
 		captcha: false,
 		captchaCode: '',
-		// MFA-related data
 		mfaRequired: false,
 		mfaData: null,
 		otpForm: {
@@ -245,18 +245,12 @@ import { ALL_PTSI_ROLES } from '../../constants/roles';
 				captcha: this.captchaCode
 		  	}
 			this.$store.dispatch('checkAuth', authData).then((response) => {
-				// Check if MFA is required from the response
 				const data = response?.data || response;
 				if (data?.mfa_required) {
-					// Store MFA data and show verification form
 					this.mfaRequired = true;
 					this.mfaData = data;
 					this.otpForm.user_id = data.user_id;
 					
-					// Clear password for security
-					this.password = '';
-					
-					// Show success message
 					this.$notify({
 						title: 'MFA Required',
 						text: data.message || 'Please check your email/phone for the verification code.',
@@ -297,7 +291,7 @@ import { ALL_PTSI_ROLES } from '../../constants/roles';
 
 			
 				if(userPermittedRoles.some(role => ALL_PTSI_ROLES.includes(role))) {
-					this.$router.replace({ name: "dashboard" });
+					this.$router.replace({ name: "dds_root_dashboard" });
 					this.stopLoading();
 					return
 				}	
@@ -357,7 +351,12 @@ import { ALL_PTSI_ROLES } from '../../constants/roles';
 					this.stopLoading();
 				});
       	},
-		// Handle MFA verification
+		emptyErrors(){
+			this.error = false;
+			this.errors.username = '';
+			this.errors.password = '';
+			this.authErr = '';
+		},
 		async handleMfaVerification() {
 			try {
 				this.startLoading();
@@ -369,42 +368,34 @@ import { ALL_PTSI_ROLES } from '../../constants/roles';
 				});
 				
 				if (response.success) {
-					// MFA verified successfully - proceed with normal login flow
 					const data = response.data;
 					const userPermittedRoles = data?.user_role_assoc?.map(role => role.id) || [];
 					const userPermittedRoleType = data?.user_role_assoc?.map(role => role.role_type) || [];
-
 					this.$notify({
 						title: 'Success',
 						text: 'Login successful!',
 						type: 'success'
 					});
-
-					// Route based on role (same logic as regular login)
 					if(userPermittedRoles.includes("super_admin")) {
 						this.$router.replace({ name: "regionalRiskAssessment" });
 						this.stopLoading();
 						return
 					}
-
 					if(userPermittedRoles.includes("sub_enterprise")) {
 						this.$router.replace({ name: "esgAccountDashboard" });
 						this.stopLoading();
 						return
 					}
-
 					if(userPermittedRoles.includes("operator")) {
 						this.$router.replace({ name: "dueDiligenceDashboard" });
 						this.stopLoading();
 						return
 					}
-
 					if(userPermittedRoles.includes("supplier")) {
 						this.$router.replace({ name: "dueDiligenceDashboard" });
 						this.stopLoading();
 						return
 					}
-
 					if(userPermittedRoles.some(role => ALL_PTSI_ROLES.includes(role))) {
 						this.$router.replace({ name: "dashboard" });
 						this.stopLoading();
@@ -416,11 +407,9 @@ import { ALL_PTSI_ROLES } from '../../constants/roles';
 						this.stopLoading();
 						return
 					}
-
 					this.$router.replace({ name: "DashboardReports" });
 					this.stopLoading();
 				} else {
-					// Verification failed
 					this.otpError = response.message || 'Invalid verification code';
 					
 					// Check if account is locked
@@ -432,7 +421,6 @@ import { ALL_PTSI_ROLES } from '../../constants/roles';
 						});
 					}
 					
-					// Clear OTP input
 					this.otpForm.otp = '';
 					this.stopLoading();
 				}
@@ -448,10 +436,8 @@ import { ALL_PTSI_ROLES } from '../../constants/roles';
 				this.stopLoading();
 			}
 		},
-		// Resend OTP
 		async resendOtp() {
 			try {
-				// Start cooldown
 				this.resendCooldown = 60; // 60 seconds cooldown
 				const interval = setInterval(() => {
 					this.resendCooldown--;
@@ -460,7 +446,6 @@ import { ALL_PTSI_ROLES } from '../../constants/roles';
 					}
 				}, 1000);
 				
-				// Make login request again to generate new OTP
 				const authData = {
 					credential: this.username,
 					password: this.password,
@@ -487,22 +472,14 @@ import { ALL_PTSI_ROLES } from '../../constants/roles';
 				});
 			}
 		},
-		// Cancel MFA and go back to login
 		cancelMfa() {
 			this.mfaRequired = false;
 			this.mfaData = null;
 			this.otpForm.otp = '';
 			this.otpForm.user_id = null;
 			this.otpError = '';
-			this.password = ''; // Clear password
+			this.password = ''; 
 		},
-		emptyErrors(){
-			this.error = false;
-			this.errors.username = '';
-			this.errors.password = '';
-			this.authErr = '';
-		},
-		
 		validForm() {
 			if(this.username == ''){
 				this.errors.username = 'Email can not be empty.';
@@ -644,14 +621,11 @@ input.form-control:focus-visible {
 	font-size: 13px;
 	font-family: pop_semiBold;
 }
-
-/* MFA Styles */
 .mfa-header h2 {
 	font-size: 24px;
 	font-family: pop_semiBold;
 	font-weight: 600;
 }
-
 .otp-input input {
 	text-align: center;
 	font-size: 24px;

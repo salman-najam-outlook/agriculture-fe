@@ -211,6 +211,7 @@ import ProtocolCard from "./components/protocol/ProtocolCard.vue";
 import NoProtocolCard from "./components/protocol/NoProtocolCard.vue";
 import { mapGetters } from 'vuex';
 import store from "../../../store";
+
 export default {
     components: {
         UserList,
@@ -422,7 +423,7 @@ export default {
                         this.pagination.to = this.filterParams.page * this.filterParams.limit - (this.filterParams.limit - this.suborganizations?.length);
 
                         if (this.isSubEnterprise) {
-                            // const currentOrgId = JSON.parse(localStorage.getItem('user'))?.id;
+                            //const currentOrgId = JSON.parse(localStorage.getItem('user'))?.id;
                             const currentOrgId = store.getters.getUser?.id;
                             this.currentSubOrganization = this.suborganizations.find(item => item.primaryUserId === currentOrgId);
                         }

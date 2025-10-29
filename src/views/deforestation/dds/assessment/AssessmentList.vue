@@ -282,7 +282,6 @@ export default {
     async getAssessments() {
       this.assessmentLoading = true;
       try {
-
         // const loggedInUser = localStorage.getItem('user')
         // const user = JSON.parse(loggedInUser);
         const user = store.getters.getUser;
@@ -343,7 +342,7 @@ export default {
       }
       if(type === 'existing', selectedAssessments?.length){
         this.startLoading()
-        // const loggedInUser = localStorage.getItem('user')
+       // const loggedInUser = localStorage.getItem('user')
         // const user = JSON.parse(loggedInUser);
         const user = store.getters.getUser;
         try{

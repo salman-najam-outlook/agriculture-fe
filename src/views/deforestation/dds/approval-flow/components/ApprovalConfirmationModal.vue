@@ -16,7 +16,8 @@
           <div class="mb-4">
             <p class="mb-2 font-weight-medium">{{ $t('dueDiligence.approvalOnceApprovedTitle') }}:</p>
             <ul class="ml-4">
-              <li>{{ $t('dueDiligence.approvalVerifiedByPtsi') }}</li>
+              <li v-if="isKenyaClient">{{ $t('dueDiligence.approvalVerifiedByAgent') }}</li>
+              <li v-else>{{ $t('dueDiligence.approvalVerifiedByPtsi') }}</li>
               <li>{{ $t('dueDiligence.approvalVerificationLinks') }}</li>
               <li>{{ $t('dueDiligence.approvalNoFurtherChanges') }}</li>
               <li>{{ $t('dueDiligence.approvalPublishedToBlockchain') }}</li>
@@ -100,6 +101,7 @@
 <script>
 import DeforestationService from '@/_services/DeforestationService';
 import LoadingMixin from '@/mixins/LoadingMixin';
+import { ROLES } from '../../../../../constants/roles';
 export default {
   name: 'ApprovalConfirmationModal',
   mixins: [LoadingMixin],
@@ -130,8 +132,17 @@ export default {
     getOrganizationId() {
       return this.$store.getters.getUser?.user_organization?.id;
     },
+
+    isKenyaClient(){
+      const user = JSON.parse(localStorage.getItem('user'));
+      if(!user) return false;
+      const isKenyaClient = user.user_role_assoc.some(role => role.id === ROLES.kenya_ptsi.value || role.id === ROLES.kenya_ptsi_worker.value);
+      console.log("isKenyaClient:", isKenyaClient, user);
+      return isKenyaClient;
+    },
   },
   methods: {
+  
     async fetchSettings() {
       this.startLoading();
       try {

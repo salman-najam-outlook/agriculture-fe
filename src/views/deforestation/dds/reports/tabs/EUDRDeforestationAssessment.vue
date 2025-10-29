@@ -71,13 +71,13 @@
                   <label for="text">&nbsp;</label>
                   <v-text-field 
                     prepend-inner-icon="mdi-magnify" 
-                    outlined 
                     height="5px" 
                     :placeholder="$t('search')" 
                     dense
                     v-model="search" 
                     @input="debouncedGetProductionPlaces" 
-                    class="search-field">
+                    class="search-field"
+                    v-bind="getTextFieldProps()">
                   </v-text-field>
                 </div>
 
@@ -98,8 +98,8 @@
                     :items="countries"
                     :label="$t('deforestation.allCountries')" 
                     @change="getProductionPlaces" 
-                    outlined 
-                    dense>
+                    dense
+                    v-bind="getSelectProps()">
                   </v-autocomplete>
                 </div>
 
@@ -119,8 +119,8 @@
                     item-value="val" 
                     :items="allStatus"
                     @change="getProductionPlaces" 
-                    outlined 
-                    dense>
+                    dense
+                    v-bind="getSelectProps()">
                   </v-autocomplete>
                 </div>
               </div>
@@ -137,7 +137,8 @@
                   outlined 
                   color="primary" 
                   :disabled="options.page <= 1"
-                  @click="pageChange(false)">
+                  @click="pageChange(false)"
+                  v-bind="getButtonProps()">
                   <v-icon dark>
                     mdi-chevron-left
                   </v-icon>
@@ -149,7 +150,8 @@
                   outlined 
                   color="primary" 
                   :disabled="options.page >= totalPages"
-                  @click="pageChange(true)">
+                  @click="pageChange(true)"
+                  v-bind="getButtonProps()">
                   <v-icon dark>
                     mdi-chevron-right
                   </v-icon>
@@ -157,7 +159,7 @@
                 <v-menu v-model="customizeMenu" :close-on-content-click="false" :nudge-width="200"
                   left :min-width="417">
                   <template v-slot:activator="{ on, attrs }">
-                    <v-btn class="mx-2" fab small outlined color="primary" v-bind="attrs" v-on="on">
+                    <v-btn class="mx-2" fab small outlined color="primary" v-bind="{...attrs, ...getButtonProps()}" v-on="on">
                       <v-icon dark> mdi-cog-outline </v-icon>
                     </v-btn>
                   </template>
@@ -208,7 +210,7 @@
                     </v-layout>
                   </v-card>
                 </v-menu>
-                <v-btn class="mx-2" @click="exportToPDF" fab small outlined color="primary">
+                <v-btn class="mx-2" @click="exportToPDF" fab small outlined color="primary" v-bind="getButtonProps()">
                   <v-icon dark>
                     mdi-tray-arrow-down
                   </v-icon>
@@ -221,11 +223,11 @@
               <div class="mobile-search">
                 <v-text-field 
                   prepend-inner-icon="mdi-magnify" 
-                  outlined 
                   dense
                   :placeholder="$t('search')" 
                   v-model="search" 
-                  @input="debouncedGetProductionPlaces">
+                  @input="debouncedGetProductionPlaces"
+                  v-bind="getTextFieldProps()">
                 </v-text-field>
               </div>
               <div class="mobile-filters">
@@ -236,8 +238,8 @@
                   :items="countries"
                   :label="$t('deforestation.allCountries')" 
                   @change="getProductionPlaces" 
-                  outlined 
-                  dense>
+                  dense
+                  v-bind="getSelectProps()">
                 </v-autocomplete>
                 <v-autocomplete  
                   v-model="statusModel" 
@@ -245,8 +247,8 @@
                   item-value="val" 
                   :items="allStatus"
                   @change="getProductionPlaces" 
-                  outlined 
-                  dense>
+                  dense
+                  v-bind="getSelectProps()">
                 </v-autocomplete>
               </div>
             </div>
@@ -263,7 +265,8 @@
                   outlined 
                   color="primary" 
                   :disabled="options.page <= 1"
-                  @click="pageChange(false)">
+                  @click="pageChange(false)"
+                  v-bind="getButtonProps()">
                   <v-icon dark>
                     mdi-chevron-left
                   </v-icon>
@@ -274,7 +277,8 @@
                   outlined 
                   color="primary" 
                   :disabled="options.page >= totalPages"
-                  @click="pageChange(true)">
+                  @click="pageChange(true)"
+                  v-bind="getButtonProps()">
                   <v-icon dark>
                     mdi-chevron-right
                   </v-icon>
@@ -332,7 +336,7 @@
                       <div class="d-flex" v-if="item.deforestationStatus && !item.isExpired">
                         <template v-if="getEUDRDeforestationStatus(item.deforestationStatus).text !== 'N/A'">
                           <v-btn class="mr-2" small rounded min-width="200" depressed :class="getEUDRDeforestationStatus(item.deforestationStatus).class" height="34"
-                        >
+                        v-bind="getButtonProps()">
                           {{ getEUDRDeforestationStatus(item.deforestationStatus).text }}
                         </v-btn>
                         <img class="mr-2"  @click="handleViewEudrAssessment(item)" :src="isIndonesianClient ? '/img/id/todo-list.svg' : isKenyaClient ? '/img/ke/todo-list.svg' : '/icons/todo-list.png'" style="width: 34px; height: 34px; border-radius: 50%;" />
@@ -353,7 +357,7 @@
                         </template>
                       </div>
                       <span class="text-decoration-underline cursor-pointer" v-else
-                        @click="handleUploadEudrAssessment(item)">{{ $t('uploadAssessment') }}</span>
+                        @click="handleUploadEudrAssessment(item)" v-bind="getButtonProps()">{{ $t('uploadAssessment') }}</span>
                     </template>
                   </td>
 
@@ -361,7 +365,7 @@
                     <div class="d-flex">
                       <v-menu v-if="checkEUDRExisting">
                         <template v-slot:activator="{ on, attrs }">
-                          <v-btn x-small fab v-bind="attrs" v-on="on" color="primary">
+                          <v-btn x-small fab v-bind="{...attrs, ...getButtonProps()}" v-on="on" color="primary">
                             <img :src="isIndonesianClient ? '/img/id/todo-list.svg' : isKenyaClient ? '/img/ke/todo-list.svg' : '/icons/todo-list.png'" style="width: 34px; height: 34px; border-radius: 50%;" />
                           </v-btn>
                         </template>
@@ -373,7 +377,7 @@
                       </v-menu>
                       <div>
                         <v-icon class="ml-5 primary--text" style="margin-left: 20px;"
-                        @click="removeFarm(item.farmId)">mdi-trash-can</v-icon>
+                        @click="removeFarm(item.farmId)" v-bind="getButtonProps()">mdi-trash-can</v-icon>
                       </div>
                     </div>
                   </td>
@@ -398,18 +402,18 @@
 
         <v-row class="my-10 mx-2" v-if="productionPlaces.length">
           <template v-if="!checkEUDRExisting">
-            <v-btn color="primary" dark class="mr-2 mb-2" @click="handleUploadEudrAssessment(productionPlaces)">
+            <v-btn color="primary" dark class="mr-2 mb-2" @click="handleUploadEudrAssessment(productionPlaces)" v-bind="getButtonProps()">
               {{ $t("uploadOneDeforestationAssessmentForAllFarms") }}
             </v-btn>
           </template>
           <template v-else>
-            <v-btn color="primary" dark class="mr-2 mb-2" @click="removeAllHighRiskFarm">
+            <v-btn color="primary" dark class="mr-2 mb-2" @click="removeAllHighRiskFarm" v-bind="getButtonProps()">
               {{ $t("deforestation.removeAllHighRiskFarm") }}
             </v-btn>
-            <v-btn color="primary" dark class="mr-2 mb-2" @click="removeAllLowRiskFarm">
+            <v-btn color="primary" dark class="mr-2 mb-2" @click="removeAllLowRiskFarm" v-bind="getButtonProps()">
               {{ $t("deforestation.removeAllLowRiskFarm") }}
             </v-btn>
-            <v-btn color="primary" dark class="mr-2 mb-2" @click="triggerFileInput">
+            <v-btn color="primary" dark class="mr-2 mb-2" @click="triggerFileInput" v-bind="getButtonProps()">
               {{ $t("deforestation.attachRiskMigrationDoc") }}
             </v-btn>           
             <v-tooltip top color="black" max-width="220">
@@ -451,7 +455,7 @@
             </h3>
           </div>
           <div style="width:30%">
-            <v-textarea class="px-4" :rows="3" v-model="highRiskComment" :placeholder="$t('activationKey.comments')" @input="handleHightRiskMitigation" outlined></v-textarea>
+            <v-textarea class="px-4" :rows="3" v-model="highRiskComment" :placeholder="$t('activationKey.comments')" @input="handleHightRiskMitigation" v-bind="getTextareaProps()"></v-textarea>
           </div>
           <div></div>
         </v-row>
@@ -471,13 +475,13 @@
                   {{ totalRemovedProductionPlaces }}
                 </div>
                 <v-btn class="mx-2" fab small outlined color="primary" :disabled="removedProductionPlaceOptions.page <= 1"
-                  @click="pageChangeRemovedProductionPlace(false)">
+                  @click="pageChangeRemovedProductionPlace(false)" v-bind="getButtonProps()">
                   <v-icon dark>
                     mdi-chevron-left
                   </v-icon>
                 </v-btn>
                 <v-btn class="mx-2" fab small outlined color="primary" :disabled="removedProductionPlaceOptions.page >= totalRemovedPages
-                  " @click="pageChangeRemovedProductionPlace(true)">
+                  " @click="pageChangeRemovedProductionPlace(true)" v-bind="getButtonProps()">
                   <v-icon dark>
                     mdi-chevron-right
                   </v-icon>
@@ -548,7 +552,7 @@
                       <div style="margin-top: 5px; cursor: pointer;">
                         <v-tooltip top color="00BD73" max-width="350">
                           <template v-slot:activator="{ on, attrs }">
-                            <img v-bind="attrs" v-on="on" @click="restoreFarm(item.id)" class="ml-2" src="/icons/undo.png"
+                            <img v-bind="{...attrs, ...getButtonProps()}" v-on="on" @click="restoreFarm(item.id)" class="ml-2" src="/icons/undo.png"
                               style="width: 24px; height: 24px; border-radius: 50%; margin-left: 20px;" />
                           </template>
                           <span>{{ $t("deforestation.undoDelete") }}</span>

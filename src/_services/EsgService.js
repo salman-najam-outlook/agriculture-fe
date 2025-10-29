@@ -867,6 +867,32 @@ export default {
       .catch(({ response }) => Promise.reject(response));
   },
 
+  async createEsgReportTemplates(payload) {
+    return axios
+      .post(`${API_BASE_URL}/admin/esg-report-template`, payload, {
+        baseURL: process.env.VUE_APP_BASE_URL,
+      })
+      .then(({ data }) => data)
+      .catch(({ response }) => Promise.reject(response));
+  },
+
+  async getEsgReportTemplateById(templateId) {
+    return axios
+      .get(`${API_BASE_URL}/admin/esg-report-template/${templateId}`, {
+        baseURL: process.env.VUE_APP_BASE_URL,
+      })
+      .then(({ data }) => data)
+      .catch(({ response }) => Promise.reject(response));
+  },
+
+  async updateEsgReportTemplate(templateId, payload) {
+    return axios
+      .put(`${API_BASE_URL}/esg-report-template/${templateId}`, payload, {
+        baseURL: process.env.VUE_APP_BASE_URL,
+      })
+      .then(({ data }) => data)
+      .catch(({ response }) => Promise.reject(response));
+  }
 };
 
 

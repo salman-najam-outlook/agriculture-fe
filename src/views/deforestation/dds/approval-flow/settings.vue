@@ -11,7 +11,7 @@
 
           <div class="d-flex align-center mb-4">
             <label class="text-body-1 font-weight-medium mr-2">{{ $t("ptsi.approvalExpirationPeriod") }}</label>
-            <v-tooltip top color="00BD73" max-width="350">
+            <v-tooltip top max-width="350">
               <template v-slot:activator="{ on, attrs }">
                 <v-icon class="icon-with-background primary--text" style="color:#0EBF67" v-bind="attrs" v-on="on">
                   mdi-alert-circle
@@ -23,9 +23,9 @@
 
           <div class="d-flex align-center">
             <v-text-field v-model="overdueTime" outlined dense type="number" min="1" class="mr-4"
-              style="max-width: 100px" hide-details density="compact"></v-text-field>
+              style="max-width: 100px" hide-details></v-text-field>
             <v-select outlined dense style="max-width: 200px" v-model="overdueTimeUnit" :items="timeUnits"
-              variant="outlined" hide-details></v-select>
+              hide-details></v-select>
           </div>
         </div>
 
@@ -41,7 +41,7 @@
             <v-radio value="PRIVATE" class="mb-4">
               <template v-slot:label>
                 <div>
-                  <div class="font-weight-medium">{{ getOrganizationName == 'PT Surveyor Indonesia' ? $t("ptsi.private") : $t("ptsi.privateNaccu") }}</div>
+                  <div class="font-weight-medium">{{ isIndonesianClient ? $t("ptsi.private") : isKenyaClient ? $t("ptsi.privateNaccu") : $t("ptsi.private") }}</div>
                   <div class="text-body-2 text-medium-emphasis">{{
                     $t("ptsi.visibleOnlyToAdminsHiddenFromAllCooperativesAndUsers") }}</div>
                 </div>
@@ -51,7 +51,7 @@
             <v-radio value="COOPERATIVE_AND_PTSI_ONLY" class="mb-4">
               <template v-slot:label>
                 <div>
-                  <div class="font-weight-medium">{{ getOrganizationName == 'PT Surveyor Indonesia' ? $t("ptsi.cooperativeAndPtsiOnly") : $t("ptsi.cooperativeAndNaccuOnly") }}</div>
+                  <div class="font-weight-medium">{{ isIndonesianClient ? $t("ptsi.cooperativeAndPtsiOnly") : isKenyaClient ? $t("ptsi.cooperativeAndNaccuOnly") : $t("ptsi.cooperativeAndPtsiOnly") }}</div>
                   <div class="text-body-2 text-medium-emphasis">{{
                     $t("ptsi.visibleOnlyToTheAssignedCooperativeAndPlatformAdministrators") }}</div>
                 </div>
@@ -72,9 +72,6 @@
 
         <!-- Action Buttons -->
         <div class="d-flex justify-end mt-8">
-          <v-btn outlined dense primary @click="goBack" class="mr-2 text-capitalize text-primary">
-            {{ $t("cancel") }}
-          </v-btn>
           <v-btn color="primary" @click="saveSettings">
             {{ $t("ptsi.saveSettings") }}
           </v-btn>
@@ -87,6 +84,7 @@
 <script>
 import DeforestationService from '@/_services/DeforestationService';
 import loadingMixin from "@/mixins/LoadingMixin";
+import { isKenyaClient, isIndonesianClient } from '@/utils';
 export default {
   name: 'ApprovalFlowSettings',
   mixins: [loadingMixin],
@@ -114,8 +112,11 @@ export default {
     getOrganizationId() {
       return this.$store.getters.getUser?.user_organization?.id;
     },
-    getOrganizationName() {
-      return this.$store.getters.getUser?.user_organization?.name;
+    isKenyaClient() {
+      return isKenyaClient();
+    },
+    isIndonesianClient() {
+      return isIndonesianClient();
     },
   },
   async mounted() {
@@ -177,9 +178,6 @@ export default {
       } finally {
         this.stopLoading();
       }
-    },
-    goBack() {
-      this.$router.push('/approvalFlow');
     },
   },
 };

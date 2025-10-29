@@ -22,5 +22,9 @@ export const PERMISSIONS = {
     can_delete_farm: {
         value: 'can_delete_farm',
         description: 'Delete a farm'
+    },
+    can_eudr_report_create_update: {
+        value: 'can_eudr_report_create_update',
+        description: 'Create and update EUDR report'
     }
 }

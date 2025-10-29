@@ -439,8 +439,7 @@ export default {
         }, 1000),
         
         getSubEnterpriseName() {
-            // const user = JSON.parse(localStorage.getItem('user'));
-            const user = this.getUser;
+            const user = JSON.parse(localStorage.getItem('user'));
             return user?.user_organization?.name || '';
         },
         async getProtocolDetails() {

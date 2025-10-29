@@ -33,9 +33,7 @@ export default {
             return new Promise((resolve, reject) => {
             axios.get(fileUrl, {
                 headers: {
-                    //salman
                     // 'oauth-token': oauthToken,
-                    //salman
                     'Content-Type': 'application/pdf',
                 },
                 responseType: 'blob' 
@@ -58,9 +56,7 @@ export default {
             return new Promise((resolve, reject) => {
                 axios.post(fileUrl, payload, {
                     headers: {
-                        //salman
                         // 'oauth-token': oauthToken
-                        //salman
                     },
                     responseType: 'blob' 
                 }).then(response => {

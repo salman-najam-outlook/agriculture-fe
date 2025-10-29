@@ -24,26 +24,28 @@
       :placeholder="$t('memberDataSection.download')"
     ></v-select>
     <v-btn
-      v-if="diligenceId"
+      v-if="diligenceId && !isReadonlyMode"
       color="#F03737"
       dark
       medium
       class="mr-3"
       @click="discard"
+      v-bind="getButtonProps()"
     >
       {{ $t('deforestation.discard')}}
     </v-btn>
     <v-btn
-      v-if="diligenceId && !isSupplierOperatorOnly"
+      v-if="diligenceId && !isSupplierOperatorOnly && !isReadonlyMode"
       color="#FFB443"
       dark
       medium
       class="mr-3"
       @click="reject"
+      v-bind="getButtonProps()"
     >
       {{ $t('deforestation.reject')}}
     </v-btn>
-    <v-btn v-if="showRequestAdditionalInformation" color="primary" dark medium class="mr-3" @click="requestAdditionalInformation" >
+    <v-btn v-if="showRequestAdditionalInformation && !isReadonlyMode" color="primary" dark medium class="mr-3" @click="requestAdditionalInformation" v-bind="getButtonProps()">
       {{ $t('deforestation.requestAdditionalInformation')}}
     </v-btn>
     <v-btn
@@ -51,8 +53,9 @@
       dark
       medium
       class="mr-3"
-      v-if="!isFinalPage"
+      v-if="!isFinalPage && !isReadonlyMode"
       @click="saveAndContinueLater"
+      v-bind="getButtonProps()"
     >
       {{ $t('deforestation.saveAndContinueLater')}}
     </v-btn>
@@ -64,8 +67,9 @@
       dark 
       medium 
       class="mr-3"
-      v-if="isFinalPage && isConcludeState"
+      v-if="isFinalPage && isConcludeState && !isReadonlyMode"
       @click="approveDialog = true"
+      v-bind="getButtonProps()"
       >
       {{ $t('deforestation.conclude') }}
     </v-btn>
@@ -74,7 +78,7 @@
         dark
         medium
         class="mr-3"
-        v-if="isFinalPage && isSupplierOnly && isReportComplaintAndNonComplaint && !isIndonesianClient && !shareReportEnabled"
+        v-if="isFinalPage && isSupplierOnly && isReportComplaintAndNonComplaint && !isIndonesianClient && !shareReportEnabled && !isReadonlyMode"
         @click="sendToOperatorDialog = true"
         >
       {{ $t('deforestation.sendToOperator') }}
@@ -84,7 +88,7 @@
       dark 
       medium 
       class="mr-3"
-      v-if="isFinalPage && isReportApproved && isOperatorOperatorOwnerOnly"
+      v-if="isFinalPage && isReportApproved && isOperatorOperatorOwnerOnly && !isReadonlyMode"
       @click="handleEUDRUpload()"
       >
       {{ $t('deforestation.uploadToEudr') }}
@@ -95,7 +99,7 @@
       dark
       medium
       class="mr-3"
-      v-if="isFinalPage && isReportComplaintAndNonComplaint && shareReportEnabled && !isOperator"
+      v-if="isFinalPage && isReportComplaintAndNonComplaint && shareReportEnabled && !isOperator && !isReadonlyMode"
       @click="shareReportToExporter"
       >
     >
@@ -125,6 +129,7 @@ import SaveAndContinueDialog from "./SaveAndContinueDialog.vue";
 import ApproveDialog from './ApproveDialog.vue';
 import ConfirmDownload from './ConfirmDownload.vue';
 import RoleMixin from "@/mixins/RoleMixin";
+import reportReadonlyMixin from "@/mixins/reportReadonlyMixin";
 import RequestAdditionalInformation from "./RequestAdditionalInformation.vue";
 
 import Seventy2HourConfirmation from './final-conclude/72HourConfirmation.vue'
@@ -421,7 +426,7 @@ export default {
       this.$emit("shareReportToExporter");
     }
   },
-  mixins:[RoleMixin]
+  mixins:[RoleMixin, reportReadonlyMixin]
 };
 </script>
 

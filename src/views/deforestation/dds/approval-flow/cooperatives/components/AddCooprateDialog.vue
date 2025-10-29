@@ -2,7 +2,13 @@
   <v-dialog v-model="internalDialog" max-width="700px" persistent>
     <v-card>
       <v-toolbar color="primary" dark flat class="sticky-toolbar">
-        <v-toolbar-title>{{ isEdit ? $t('approvalFlow.cooperative.edit') : $t('approvalFlow.cooperative.add') }}</v-toolbar-title>
+        <v-toolbar-title>{{
+          isKenyaClient ? (isEdit ? $t('approvalFlow.cooperative.editAgent') : $t('approvalFlow.cooperative.addNewAgent')) : 
+          (
+          isEdit ? $t('approvalFlow.cooperative.edit') : $t('approvalFlow.cooperative.add')
+          
+        )
+          }}</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn icon @click="handleClose">
           <v-icon>mdi-close</v-icon>
@@ -13,7 +19,7 @@
         <v-container fluid>
           <v-row>
             <v-col cols="12" md="6">
-              <label class="field-label">{{ $t('approvalFlow.cooperative.cooperativeName') }}
+              <label class="field-label">{{ isKenyaClient ? $t('approvalFlow.cooperative.agentUnionName') : $t('approvalFlow.cooperative.cooperativeName') }}
                 <v-tooltip top color="00BD73" max-width="350">
                   <template v-slot:activator="{ on, attrs }">
                     <v-icon size="16" class="icon-with-background primary--text" style="color:#0EBF67" v-bind="attrs"
@@ -144,8 +150,8 @@
                 </v-tooltip>
               </label>
               <v-radio-group v-model="form.userType" hide-details>
-                <v-radio :label="$t('approvalFlow.cooperative.exporter')" value="exporter" color="primary"></v-radio>
-                <v-radio :label="$t('approvalFlow.cooperative.cooperative')" value="cooperative" color="primary"></v-radio>
+                <v-radio :label="isKenyaClient ? $t('approvalFlow.cooperative.agent'):$t('approvalFlow.cooperative.exporter')" value="exporter" color="primary"></v-radio>
+                <v-radio :label="isKenyaClient ?$t('approvalFlow.cooperative.union') :$t('approvalFlow.cooperative.cooperative')" value="cooperative" color="primary"></v-radio>
                 <v-radio :label="$t('approvalFlow.cooperative.bothOfThem')" value="both" color="primary"></v-radio>
               </v-radio-group>
             </v-col>
@@ -201,6 +207,7 @@
 import { getCountries } from "country-state-picker";
 import S3UploadService from '@/_services/S3UploadService';
 import loadingMixin from '@/mixins/LoadingMixin';
+import { isKenyaClient } from "@/utils";
 
 export default {
   name: 'AddCooprateDialog',
@@ -221,6 +228,9 @@ export default {
     };
   },
   computed: {
+    isKenyaClient() {
+      return isKenyaClient();
+    },
     isEdit() {
       return !!(this.item && this.item.id);
     },
